@@ -1,0 +1,65 @@
+{
+    "TestDrive01": {
+        "checkpoints": [
+            {
+                "steps": 999998,
+                "file_path": "results\\TesterTracks03\\TestDrive01\\TestDrive01-999998.onnx",
+                "reward": -1.3260000571608543,
+                "creation_time": 1703452490.6220748,
+                "auxillary_file_paths": [
+                    "results\\TesterTracks03\\TestDrive01\\TestDrive01-999998.pt"
+                ]
+            },
+            {
+                "steps": 1499987,
+                "file_path": "results\\TesterTracks03\\TestDrive01\\TestDrive01-1499987.onnx",
+                "reward": -1.267500034533441,
+                "creation_time": 1703454805.767466,
+                "auxillary_file_paths": [
+                    "results\\TesterTracks03\\TestDrive01\\TestDrive01-1499987.pt"
+                ]
+            },
+            {
+                "steps": 1999980,
+                "file_path": "results\\TesterTracks03\\TestDrive01\\TestDrive01-1999980.onnx",
+                "reward": -0.21950015623588115,
+                "creation_time": 1703457117.319223,
+                "auxillary_file_paths": [
+                    "results\\TesterTracks03\\TestDrive01\\TestDrive01-1999980.pt"
+                ]
+            },
+            {
+                "steps": 2499948,
+                "file_path": "results\\TesterTracks03\\TestDrive01\\TestDrive01-2499948.onnx",
+                "reward": -7.803000375628471,
+                "creation_time": 1703459212.7467797,
+                "auxillary_file_paths": [
+                    "results\\TesterTracks03\\TestDrive01\\TestDrive01-2499948.pt"
+                ]
+            },
+            {
+                "steps": 2542972,
+                "file_path": "results\\TesterTracks03\\TestDrive01\\TestDrive01-2542972.onnx",
+                "reward": -0.9735000301152468,
+                "creation_time": 1703459294.6115994,
+                "auxillary_file_paths": [
+                    "results\\TesterTracks03\\TestDrive01\\TestDrive01-2542972.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2542972,
+            "file_path": "results\\TesterTracks03\\TestDrive01.onnx",
+            "reward": -0.9735000301152468,
+            "creation_time": 1703459294.6115994,
+            "auxillary_file_paths": [
+                "results\\TesterTracks03\\TestDrive01\\TestDrive01-2542972.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

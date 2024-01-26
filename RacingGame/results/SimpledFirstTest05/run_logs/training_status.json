@@ -1,0 +1,29 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 250224,
+                "file_path": "results\\SimpledFirstTest05\\TunnelDriverTest\\TunnelDriverTest-250224.onnx",
+                "reward": -13.450332747151455,
+                "creation_time": 1706212293.996863,
+                "auxillary_file_paths": [
+                    "results\\SimpledFirstTest05\\TunnelDriverTest\\TunnelDriverTest-250224.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 250224,
+            "file_path": "results\\SimpledFirstTest05\\TunnelDriverTest.onnx",
+            "reward": -13.450332747151455,
+            "creation_time": 1706212293.996863,
+            "auxillary_file_paths": [
+                "results\\SimpledFirstTest05\\TunnelDriverTest\\TunnelDriverTest-250224.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

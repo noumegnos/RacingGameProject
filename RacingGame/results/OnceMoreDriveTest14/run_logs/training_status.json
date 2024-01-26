@@ -1,0 +1,38 @@
+{
+    "TestDrive01": {
+        "checkpoints": [
+            {
+                "steps": 499998,
+                "file_path": "results\\OnceMoreDriveTest14\\TestDrive01\\TestDrive01-499998.onnx",
+                "reward": -0.8965000435709953,
+                "creation_time": 1703280219.1189902,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreDriveTest14\\TestDrive01\\TestDrive01-499998.pt"
+                ]
+            },
+            {
+                "steps": 500062,
+                "file_path": "results\\OnceMoreDriveTest14\\TestDrive01\\TestDrive01-500062.onnx",
+                "reward": -0.8965000435709953,
+                "creation_time": 1703280219.157925,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreDriveTest14\\TestDrive01\\TestDrive01-500062.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500062,
+            "file_path": "results\\OnceMoreDriveTest14\\TestDrive01.onnx",
+            "reward": -0.8965000435709953,
+            "creation_time": 1703280219.157925,
+            "auxillary_file_paths": [
+                "results\\OnceMoreDriveTest14\\TestDrive01\\TestDrive01-500062.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

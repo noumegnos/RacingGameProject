@@ -1,0 +1,47 @@
+{
+    "TestDrive01": {
+        "checkpoints": [
+            {
+                "steps": 499973,
+                "file_path": "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-499973.onnx",
+                "reward": -0.41066664286578697,
+                "creation_time": 1703286580.6987162,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-499973.pt"
+                ]
+            },
+            {
+                "steps": 999945,
+                "file_path": "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-999945.onnx",
+                "reward": -0.9771579417743181,
+                "creation_time": 1703287421.533244,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-999945.pt"
+                ]
+            },
+            {
+                "steps": 1000009,
+                "file_path": "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-1000009.onnx",
+                "reward": -0.9771579417743181,
+                "creation_time": 1703287421.5873706,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-1000009.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1000009,
+            "file_path": "results\\OnceMoreDriveTest21\\TestDrive01.onnx",
+            "reward": -0.9771579417743181,
+            "creation_time": 1703287421.5873706,
+            "auxillary_file_paths": [
+                "results\\OnceMoreDriveTest21\\TestDrive01\\TestDrive01-1000009.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

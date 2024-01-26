@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1703357078",
+        "python_version": "3.9.13 (main, Oct 13 2022, 21:23:06) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\vorgo\\anaconda3\\envs\\MLAgents\\Scripts\\mlagents-learn config/try.yaml --run-id=TrackingSomeTests07",
+        "mlagents_version": "0.30.0",
+        "mlagents_envs_version": "0.30.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.1.2+cpu",
+        "numpy_version": "1.21.2",
+        "end_time_seconds": "1703357089"
+    },
+    "total": 11.238269,
+    "count": 1,
+    "self": 0.007957500000001616,
+    "children": {
+        "run_training.setup": {
+            "total": 0.07415240000000001,
+            "count": 1,
+            "self": 0.07415240000000001
+        },
+        "TrainerController.start_learning": {
+            "total": 11.1561591,
+            "count": 1,
+            "self": 0.000401099999999488,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 11.1557478,
+                    "count": 1,
+                    "self": 11.1557478
+                },
+                "trainer_threads": {
+                    "total": 8.999999998593466e-07,
+                    "count": 1,
+                    "self": 8.999999998593466e-07
+                },
+                "TrainerController._save_models": {
+                    "total": 9.300000000322939e-06,
+                    "count": 1,
+                    "self": 9.300000000322939e-06
+                }
+            }
+        }
+    }
+}
