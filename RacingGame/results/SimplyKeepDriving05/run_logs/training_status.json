@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 6499984,
+                "file_path": "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-6499984.onnx",
+                "reward": null,
+                "creation_time": 1706392989.7962146,
+                "auxillary_file_paths": [
+                    "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-6499984.pt"
+                ]
+            },
+            {
+                "steps": 6999968,
+                "file_path": "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-6999968.onnx",
+                "reward": -10.001665845513344,
+                "creation_time": 1706393700.58368,
+                "auxillary_file_paths": [
+                    "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-6999968.pt"
+                ]
+            },
+            {
+                "steps": 7499960,
+                "file_path": "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-7499960.onnx",
+                "reward": -4.9749994486570355,
+                "creation_time": 1706394420.349836,
+                "auxillary_file_paths": [
+                    "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-7499960.pt"
+                ]
+            },
+            {
+                "steps": 7999984,
+                "file_path": "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-7999984.onnx",
+                "reward": -5.852499391883612,
+                "creation_time": 1706395110.351549,
+                "auxillary_file_paths": [
+                    "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-7999984.pt"
+                ]
+            },
+            {
+                "steps": 8000304,
+                "file_path": "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-8000304.onnx",
+                "reward": -5.852499391883612,
+                "creation_time": 1706395110.3861072,
+                "auxillary_file_paths": [
+                    "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-8000304.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 8000304,
+            "file_path": "results\\SimplyKeepDriving05\\TunnelDriverTest.onnx",
+            "reward": -5.852499391883612,
+            "creation_time": 1706395110.3861072,
+            "auxillary_file_paths": [
+                "results\\SimplyKeepDriving05\\TunnelDriverTest\\TunnelDriverTest-8000304.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

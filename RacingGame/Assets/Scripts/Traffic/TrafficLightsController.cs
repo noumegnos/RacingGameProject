@@ -36,34 +36,36 @@ public class TrafficLightsController : MonoBehaviour
 
     public LayerMask obstacles;
     public bool trainDetected;
+    public float chance = 0.5f;
 
     public List<GameObject> barriers = new List<GameObject>();
 
+    //train system has been moved to Traffic Spawner
     //odds of spawning a train
-    public float chance = 0.5f;
-    public List<GameObject> trainsToEnable = new List<GameObject>(); //list of trains to enable; it is actually only ever 2, so maybe something simpler than List could be used?
-    public float trainOffset = 50f; //train position on X-axis randomly offset by -trainOffset to trainOffset, so that it has a somewhat randomized starting position
+
+    //public List<GameObject> trainsToEnable = new List<GameObject>(); //list of trains to enable; it is actually only ever 2, so maybe something simpler than List could be used?
+    //public float trainOffset = 50f; //train position on X-axis randomly offset by -trainOffset to trainOffset, so that it has a somewhat randomized starting position
 
     // Start is called before the first frame update
     void Start()
     {
 
-        if(trainsToEnable.Count > 0)
-        {
-            foreach (GameObject go in trainsToEnable)
-            {
-                if (Random.Range(0f, 1f) > chance)
-                {
-                    go.SetActive(true);
+        //if(trainsToEnable.Count > 0)
+        //{
+        //    foreach (GameObject go in trainsToEnable)
+        //    {
+        //        if (Random.Range(0f, 1f) > chance)
+        //        {
+        //            go.SetActive(true);
 
-                    go.transform.position = new Vector3(go.transform.position.x + Random.Range(-trainOffset, trainOffset), go.transform.position.y, go.transform.position.z);
-                }
-                else
-                {
-                    go.SetActive(false);
-                }
-            }
-        }
+        //            go.transform.position = new Vector3(go.transform.position.x + Random.Range(-trainOffset, trainOffset), go.transform.position.y, go.transform.position.z);
+        //        }
+        //        else
+        //        {
+        //            go.SetActive(false);
+        //        }
+        //    }
+        //}
 
         if (useDetection)
         {

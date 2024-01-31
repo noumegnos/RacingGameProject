@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 499980,
+                "file_path": "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-499980.onnx",
+                "reward": -0.07583435785962395,
+                "creation_time": 1706278922.3629048,
+                "auxillary_file_paths": [
+                    "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-499980.pt"
+                ]
+            },
+            {
+                "steps": 999986,
+                "file_path": "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-999986.onnx",
+                "reward": -0.5128545116633176,
+                "creation_time": 1706280371.596838,
+                "auxillary_file_paths": [
+                    "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-999986.pt"
+                ]
+            },
+            {
+                "steps": 1499955,
+                "file_path": "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-1499955.onnx",
+                "reward": null,
+                "creation_time": 1706282130.8712943,
+                "auxillary_file_paths": [
+                    "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-1499955.pt"
+                ]
+            },
+            {
+                "steps": 1999971,
+                "file_path": "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-1999971.onnx",
+                "reward": -1.1822187225043308,
+                "creation_time": 1706284705.155459,
+                "auxillary_file_paths": [
+                    "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-1999971.pt"
+                ]
+            },
+            {
+                "steps": 2000035,
+                "file_path": "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-2000035.onnx",
+                "reward": -1.1822187225043308,
+                "creation_time": 1706284705.1793692,
+                "auxillary_file_paths": [
+                    "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-2000035.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2000035,
+            "file_path": "results\\KeepLearnSimply03\\TunnelDriverTest.onnx",
+            "reward": -1.1822187225043308,
+            "creation_time": 1706284705.1793692,
+            "auxillary_file_paths": [
+                "results\\KeepLearnSimply03\\TunnelDriverTest\\TunnelDriverTest-2000035.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

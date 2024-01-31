@@ -8,4 +8,6 @@ using UnityEngine;
 public class CheckpointManager : MonoBehaviour
 {
     public List<Transform> listOfChecks = new List<Transform>();
+
+    public Dictionary<int, Vector3> dictOfChecks = new Dictionary<int, Vector3>();
 }

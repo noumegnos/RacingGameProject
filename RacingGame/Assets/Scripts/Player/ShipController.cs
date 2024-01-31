@@ -27,6 +27,7 @@ public class ShipController : MonoBehaviour
     public float grip = 1f; //how quickly lateral movement is lost; slipperiness
     public float weight = 1f; //weight impacts collisions between ships, the one with the lesser is bumped more
     public float jumpSpeed = 2; //how high you can jump; everyone should have same jumpiness
+    float defJumpSpeed; //if jumpSpeed is limited by something, it can be reset to this value after it is no longer limited
     public float gravity = 9.8f; //gravity controls rate of descent
     public float gravityMod = 1f; //how quickly gravity is applied
     public float maxFuel; //fuel is depleted when using nitro booster
@@ -101,6 +102,7 @@ public class ShipController : MonoBehaviour
     public bool ground3;
     public bool ground4;
 
+    public bool canJump;
     public bool isJumping;
 
     string objectUnderMeTag;
@@ -109,6 +111,9 @@ public class ShipController : MonoBehaviour
 
     //ML Agent
     public bool isHuman;
+    public bool useTimeout;
+    public float timeout = 60f; //if agent is stuck somewhere, a timer will run out and reposition ship
+    public float defTimeout;
 
     //controls
     public float input;
@@ -122,7 +127,9 @@ public class ShipController : MonoBehaviour
     //checkpoint handling
     //checkpoints are used to keep track of how far a ship has traveled, and to reposition the ship in case it gets destroyed or falls off the track
     public GameObject lastCheckpoint; //when crossing a checkpoint trigger, that checkpoint is set to be this object
-    public GameObject nextCheckpoint; //not sure if needed, more of a test of a system (could be used for ML agents)
+    //public Transform lastCheckpointTransform; //when crossing a checkpoint trigger, that checkpoint is set to be this object
+    //public GameObject nextCheckpoint; //not sure if needed, more of a test of a system (could be used for ML agents)
+    public Vector3 nextCheckpointTransform; //not sure if needed, more of a test of a system (could be used for ML agents)
     public Vector3 originPoint; //this is the starting location
     public float distanceToNextCheckpoint;
 
@@ -148,106 +155,140 @@ public class ShipController : MonoBehaviour
         fuel = maxFuel;
         ammo = maxAmmo;
         defFallTime = fallTime;
+        defJumpSpeed = jumpSpeed;
+
+        defTimeout = timeout;
 
         originPoint = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
+        nextCheckpointTransform = checkpointManager.dictOfChecks[1];
+
     }
+
+    
 
     // Update is called once per frame
     void Update()
     {
-        if(controlsEnabled)
+        //if(controlsEnabled)
+        //{
+        //    if (isHuman)
+        //    {
+        //        input = Input.GetAxis("Horizontal");
+
+        //        if (Input.GetKey(KeyCode.UpArrow))
+        //        {
+        //            acceleration = 1f;
+        //        }
+        //        else if (Input.GetKey(KeyCode.DownArrow))
+        //        {
+        //            acceleration = -1f;
+        //        }
+        //        else
+        //        {
+        //            acceleration = 0f;
+        //        }
+
+        //        if (Input.GetKey(KeyCode.Z))
+        //        {
+        //            //nitro boost
+        //            if(fuel >= 0f)
+        //            {
+        //                fuel -= fuelConsumption * Time.deltaTime;
+        //                nitroBoost = nitroBoostStat;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            nitroBoost = 0f;
+        //        }
+
+        //        if (Input.GetKey(KeyCode.X)) 
+        //        {
+        //            //shooting
+        //            //the shot origin point should be at the ship's model, instead of this object, which means I have to GetComponent it somehow 
+        //            //but lets make it work properly first
+
+        //            if(canShoot)
+        //            {
+        //                Shoot();
+        //                canShoot = false;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //ML inputs
+        //        input = gameObject.GetComponent<MLADrive2>().steering;
+        //        acceleration = gameObject.GetComponent<MLADrive2>().accelerate;
+
+        //        //jump is in FixedUpdate
+
+        //        //also nitro
+        //        if(GetComponent<MLADrive2>().boost != 0)
+        //        {
+        //            if (fuel >= 0f)
+        //            {
+        //                fuel -= fuelConsumption * Time.deltaTime;
+        //                nitroBoost = nitroBoostStat;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            nitroBoost = 0f;
+        //        }
+
+        //        //also shooting
+        //        if(GetComponent<MLADrive2>().shoot != 0)
+        //        {
+        //            if (canShoot)
+        //            {
+        //                Shoot();
+        //                canShoot = false;
+        //            }
+        //        }
+        //    }
+
+        //    if (!canShoot)
+        //    {
+        //        shootCooldown -= Time.deltaTime;
+
+        //        if (shootCooldown <= 0f)
+        //        {
+        //            canShoot = true;
+        //            shootCooldown = defaultShootCooldown;
+        //        }
+        //    }
+        //}
+
+        if(controlsEnabled && !isHuman && useTimeout)
         {
-            if (isHuman)
+            timeout -= Time.deltaTime;
+
+            if (timeout < 0f)
             {
-                input = Input.GetAxis("Horizontal");
+                RepositionAfterDelay();
 
-                if (Input.GetKey(KeyCode.UpArrow))
-                {
-                    acceleration = 1f;
-                }
-                else if (Input.GetKey(KeyCode.DownArrow))
-                {
-                    acceleration = -1f;
-                }
-                else
-                {
-                    acceleration = 0f;
-                }
-
-                if (Input.GetKey(KeyCode.Z))
-                {
-                    //nitro boost
-                    if(fuel >= 0f)
-                    {
-                        fuel -= fuelConsumption * Time.deltaTime;
-                        nitroBoost = nitroBoostStat;
-                    }
-                }
-                else
-                {
-                    nitroBoost = 0f;
-                }
-
-                if (Input.GetKey(KeyCode.X)) 
-                {
-                    //shooting
-                    //the shot origin point should be at the ship's model, instead of this object, which means I have to GetComponent it somehow 
-                    //but lets make it work properly first
-
-                    if(canShoot)
-                    {
-                        Shoot();
-                        canShoot = false;
-                    }
-                }
-            }
-            else
-            {
-                //ML inputs
-                input = gameObject.GetComponent<MLADrive2>().steering;
-                acceleration = gameObject.GetComponent<MLADrive2>().accelerate;
-
-                //jump is in FixedUpdate
-
-                //also nitro
-                if(GetComponent<MLADrive2>().boost != 0)
-                {
-                    if (fuel >= 0f)
-                    {
-                        fuel -= fuelConsumption * Time.deltaTime;
-                        nitroBoost = nitroBoostStat;
-                    }
-                }
-                else
-                {
-                    nitroBoost = 0f;
-                }
-
-                //also shooting
-                if(GetComponent<MLADrive2>().shoot != 0)
-                {
-                    if (canShoot)
-                    {
-                        Shoot();
-                        canShoot = false;
-                    }
-                }
-            }
-
-            if (!canShoot)
-            {
-                shootCooldown -= Time.deltaTime;
-
-                if (shootCooldown <= 0f)
-                {
-                    canShoot = true;
-                    shootCooldown = defaultShootCooldown;
-                }
+                timeout = defTimeout;
             }
         }
 
-        //distanceToNextCheckpoint = Vector3.Distance(transform.position, nextCheckpoint.transform.position);
+        //if(nextCheckpoint != null)
+        //{
+        //    print(rb.transform.position + " " + nextCheckpoint.transform.position);
+        //    distanceToNextCheckpoint = Vector3.Distance(rb.transform.position, nextCheckpoint.transform.position);
+        //}
+
+        if(nextCheckpointTransform != Vector3.zero)
+        {
+            distanceToNextCheckpoint = Vector3.Distance(transform.position, nextCheckpointTransform);
+
+        }
+        else
+        {
+            nextCheckpointTransform = checkpointManager.dictOfChecks[1];
+        }
+
 
         //Level Generator now has its own ResetLevel function instead
         ////restart and quit; mainly used for debugging purposes now
@@ -289,6 +330,100 @@ public class ShipController : MonoBehaviour
         }
     }
 
+    public void Inputs()
+    {
+        if (controlsEnabled)
+        {
+            if (isHuman)
+            {
+                input = Input.GetAxis("Horizontal");
+
+                if (Input.GetKey(KeyCode.UpArrow))
+                {
+                    acceleration = 1f;
+                }
+                else if (Input.GetKey(KeyCode.DownArrow))
+                {
+                    acceleration = -1f;
+                }
+                else
+                {
+                    acceleration = 0f;
+                }
+
+                if (Input.GetKey(KeyCode.Z))
+                {
+                    //nitro boost
+                    if (fuel >= 0f)
+                    {
+                        fuel -= fuelConsumption * Time.deltaTime;
+                        nitroBoost = nitroBoostStat;
+                    }
+                }
+                else
+                {
+                    nitroBoost = 0f;
+                }
+
+                if (Input.GetKey(KeyCode.X))
+                {
+                    //shooting
+                    //the shot origin point should be at the ship's model, instead of this object, which means I have to GetComponent it somehow 
+                    //but lets make it work properly first
+
+                    if (canShoot)
+                    {
+                        Shoot();
+                        canShoot = false;
+                    }
+                }
+            }
+            else
+            {
+                //ML inputs
+                input = gameObject.GetComponent<MLADrive2>().steering;
+                acceleration = gameObject.GetComponent<MLADrive2>().accelerate;
+
+                //jump is in FixedUpdate
+
+                //also nitro
+                if (GetComponent<MLADrive2>().boost != 0)
+                {
+                    if (fuel >= 0f)
+                    {
+                        fuel -= fuelConsumption * Time.deltaTime;
+                        nitroBoost = nitroBoostStat;
+                    }
+                }
+                else
+                {
+                    nitroBoost = 0f;
+                }
+
+                //also shooting
+                if (GetComponent<MLADrive2>().shoot != 0)
+                {
+                    if (canShoot)
+                    {
+                        Shoot();
+                        canShoot = false;
+                    }
+                }
+            }
+
+            if (!canShoot)
+            {
+                shootCooldown -= Time.deltaTime;
+
+                if (shootCooldown <= 0f)
+                {
+                    canShoot = true;
+                    shootCooldown = defaultShootCooldown;
+                }
+            }
+        }
+    }
+
     public void Shoot()
     {
         if(ammo > 0f)
@@ -307,43 +442,53 @@ public class ShipController : MonoBehaviour
                 {
                     hit.collider.GetComponent<DamageManager>().TakeDamage(weaponDamage);
 
-                    print("reward here");
+                    //print("reward here");
                     //add reward here
 
                     if (!isHuman)
                     {
-                        GetComponent<MLADrive2>().AddReward(0.01f);
+                        //if(hit.collider.GetComponent<ShipController>() != null)
+                        //{
+                        //    GetComponent<MLADrive2>().AddReward(0.03f);
+                        //}
+                        //else
+                        //{
+                        //    GetComponent<MLADrive2>().AddReward(0.01f);
+                        //}
+
+                        GetComponent<MLADrive2>().AddReward(0.001f);
+
                     }
                 }
                 else
                 {
-                    print("shot something indestructible: " + hit.collider.name);
+                    //print("shot something indestructible: " + hit.collider.name);
                     //negative reward for shooting something you shouldnt
 
                     if (!isHuman)
                     {
-                        GetComponent<MLADrive2>().AddReward(-0.01f);
+                        GetComponent<MLADrive2>().AddReward(-0.001f);
                     }
                 }
             }
             else
             {
-                print("shot nothing!");
+                //print("shot nothing!");
                 //negative reward for missing
 
                 if (!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-0.05f);
+                    GetComponent<MLADrive2>().AddReward(-0.005f);
                 }
             }
         }
         else
         {
-            print("outta ammo");
+            //print("outta ammo");
 
             if (!isHuman)
             {
-                GetComponent<MLADrive2>().AddReward(-0.01f);
+                GetComponent<MLADrive2>().AddReward(-0.001f);
             }
         }
 
@@ -393,7 +538,10 @@ public class ShipController : MonoBehaviour
         GroundChecking(deltaTime, ref rotationStream);
 
 
+
         CalculateVelocity(deltaTime, rotationStream);
+
+        Inputs();
 
         CollisionDetection();
 
@@ -431,13 +579,32 @@ public class ShipController : MonoBehaviour
 
     public void RepositionAfterDelay()
     {
+        if (!isHuman)
+        {
+            GetComponent<MLADrive2>().AddReward(-.01f);
+            //GetComponent<MLADrive2>().EndEpisode();
+
+        }
+
         controlsEnabled = false;
         Invoke("RepositionShip", 2f);
+        //if(!isHuman )
+        //{
+        //    GetComponent<MLADrive2>().EndEpisode();
+
+        //}
+
     }
 
     //this function is used to respawn the ship if destroyed, using last checkpoint transform
     public void RepositionShip()
     {
+        if (!isHuman)
+        {
+            GetComponent<MLADrive2>().EndEpisode();
+
+        }
+
         controlsEnabled = false;
 
         //ensure that no momentum carries over when being repositioned
@@ -446,7 +613,7 @@ public class ShipController : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
 
 
-        if (lastCheckpoint != null)
+        if (lastCheckpoint != null && lastCheckpoint.GetComponentInChildren<SetRespawnRotation>() != null)
         {
             float x = lastCheckpoint.GetComponentInChildren<SetRespawnRotation>().transform.position.x;
             float y = lastCheckpoint.GetComponentInChildren<SetRespawnRotation>().transform.position.y;
@@ -487,18 +654,39 @@ public class ShipController : MonoBehaviour
         RaycastHit hitDiagonalRight;
         RaycastHit hitLeftSide;
         RaycastHit hitRightSide;
+        RaycastHit hitUp;
 
         Ray rayForward = new Ray(forwardCollisionRaycast.position, forwardCollisionRaycast.transform.forward);
         Ray rayDiagonalLeft = new Ray(leftDiagonalCollisionRaycast.position, leftDiagonalCollisionRaycast.transform.forward);
         Ray rayDiagonalRight = new Ray(rightDiagonalCollisionRaycast.position, rightDiagonalCollisionRaycast.transform.forward);
         Ray raySideLeft = new Ray(leftSideCollisionRaycast.position, leftSideCollisionRaycast.transform.forward);
         Ray raySideRight = new Ray(rightSideCollisionRaycast.position, rightSideCollisionRaycast.transform.forward);
+        Ray rayUp = new Ray(transform.position, transform.up);
 
-        if(Physics.Raycast(rayForward, out hitForward, collisionDistance, allCollidingLayers))
+        if(Physics.Raycast(rayUp, out hitUp, 5f, allCollidingLayers))
+        {
+            if(hitUp.distance < 5f)
+            {
+                jumpSpeed = hitUp.distance;
+
+            }
+        }
+        else
+        {
+            jumpSpeed = defJumpSpeed;
+        }
+
+        if (Physics.Raycast(rayForward, out hitForward, collisionDistance, allCollidingLayers))
         {
             if(hitForward.distance < collisionDistance)
             {
-                if(rbVelocity.z > maxSpeedStat / 5) //just testing some values; 10 is fine, 20% of maxSpeed sounds cool
+                if (!isHuman)
+                {
+                    GetComponent<MLADrive2>().AddReward(-.001f);
+                }
+
+
+                if (rbVelocity.z > maxSpeedStat / 10) //just testing some values; 10 is fine, 20% of maxSpeed sounds cool
                 {
 
                     damageManager.TakeDamage(1);
@@ -524,9 +712,16 @@ public class ShipController : MonoBehaviour
                 //    damageManager.TakeDamage(1);
                 //}
 
-                rbVelocity.z = Mathf.Min(0f, rbVelocity.z);
+                if (!isHuman)
+                {
+                    GetComponent<MLADrive2>().AddReward(-.001f);
+                }
 
-                rbVelocity.x = Mathf.Max(0f, rbVelocity.x);
+                rbVelocity.z = Mathf.Min(1f, rbVelocity.z);
+
+                input = Mathf.Max(0f, input);
+
+                //rbVelocity.x = Mathf.Max(0f, rbVelocity.x);
             }
         }
 
@@ -540,25 +735,46 @@ public class ShipController : MonoBehaviour
                 //    damageManager.TakeDamage(1);
                 //}
 
-                rbVelocity.z = Mathf.Min(0f, rbVelocity.z);
+                if (!isHuman)
+                {
+                    GetComponent<MLADrive2>().AddReward(-.001f);
+                }
 
-                rbVelocity.x = Mathf.Min(0f, rbVelocity.x);
+                rbVelocity.z = Mathf.Min(1f, rbVelocity.z);
+
+                input = Mathf.Min(0f, input);
+
+                //rbVelocity.x = Mathf.Min(0f, rbVelocity.x);
             }
         }
 
-        if (Physics.Raycast(raySideLeft, out hitLeftSide, collisionDistance, allCollidingLayers))
+        if (Physics.Raycast(raySideLeft, out hitLeftSide, collisionDistance * 2, allCollidingLayers))
         {
             if (hitLeftSide.distance < collisionDistance)
             {
-                rbVelocity.x = Mathf.Max(0f, rbVelocity.x);
+                if (!isHuman)
+                {
+                    GetComponent<MLADrive2>().AddReward(-.001f);
+                }
+
+                input = Mathf.Max(0f, input);
+
+                //rbVelocity.x = Mathf.Max(0f, rbVelocity.x);
             }
         }
 
-        if (Physics.Raycast(raySideRight, out hitRightSide, collisionDistance, allCollidingLayers))
+        if (Physics.Raycast(raySideRight, out hitRightSide, collisionDistance * 2, allCollidingLayers))
         {
             if (hitRightSide.distance < collisionDistance)
             {
-                rbVelocity.x = Mathf.Min(0f, rbVelocity.x);
+                if (!isHuman)
+                {
+                    GetComponent<MLADrive2>().AddReward(-.001f);
+                }
+
+                input = Mathf.Min(0f, input);
+
+                //rbVelocity.x = Mathf.Min(0f, rbVelocity.x);
             }
         }
     }
@@ -655,8 +871,8 @@ public class ShipController : MonoBehaviour
                     if (didDetectChange)
                     {
                         //reward add
-                        print("reward here");
-                        GetComponent<MLADrive2>().AddReward(0.1f);
+                        //print("reward here");
+                        GetComponent<MLADrive2>().AddReward(0.002f);
                     }
 
                     jumpCheckTag = false;
@@ -876,6 +1092,8 @@ public class ShipController : MonoBehaviour
         if (ground1 | ground2 | ground3 | ground4)
         {
             isGrounded = true;
+
+            rb.angularVelocity = Vector3.zero;
         }
         else
         {
@@ -897,11 +1115,11 @@ public class ShipController : MonoBehaviour
 
             fallTime -= Time.deltaTime;
 
-            if(fallTime < 0f)
+            if(fallTime < 0f && controlsEnabled)
             {
                 if(!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-.05f);
+                    GetComponent<MLADrive2>().AddReward(-.005f);
                 }
 
                 RepositionAfterDelay();
@@ -1003,6 +1221,14 @@ public class ShipController : MonoBehaviour
                 localVelocity.z = Mathf.MoveTowards(localVelocity.z, -reverseSpeed, -acceleration * reverseAcceleration * deltaTime);
         }
 
+        //if (!isHuman)
+        //{
+        //    if(localVelocity.z > maxSpeedStat)
+        //    {
+        //        GetComponent<MLADrive2>().AddReward(-.001f);
+        //    }
+        //}
+
         rbVelocity = unrotation * rotationStream * localVelocity;
 
         if(!isGrounded)
@@ -1028,6 +1254,11 @@ public class ShipController : MonoBehaviour
         if (isGrounded && !isJumping)
         {
             isJumping = true;
+
+            if (!isHuman)
+            {
+                GetComponent<MLADrive2>().AddReward(-0.001f);
+            }
 
             //rbVelocity += rotationStream * Vector3.up * jumpSpeed;
             rbVelocity += rb.rotation * Vector3.up * jumpSpeed;

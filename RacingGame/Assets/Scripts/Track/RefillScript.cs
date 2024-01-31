@@ -51,7 +51,7 @@ public class RefillScript : MonoBehaviour
 
             if (!other.gameObject.GetComponent<ShipController>().isHuman)
             {
-                other.gameObject.GetComponent<MLADrive2>().AddReward(0.5f);
+                other.gameObject.GetComponent<MLADrive2>().AddReward(0.05f);
             }
         }
     }

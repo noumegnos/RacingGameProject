@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -80,6 +81,10 @@ public class LevelGenerator : MonoBehaviour
 
     public Transform oldestCheckpoint;
 
+    public bool useResetTimer;
+    public float resetTimer;
+    public float defResetTimer;
+
     //in the Awake, we look for the EndPosition of the initial levelPart
     private void Awake()
     {
@@ -107,6 +112,8 @@ public class LevelGenerator : MonoBehaviour
             SpawnLevelParts();
             started = true;
         }
+
+        defResetTimer = resetTimer;
 
 
     }
@@ -146,6 +153,16 @@ public class LevelGenerator : MonoBehaviour
 
             ResetLevel();
         }
+
+        if (useResetTimer)
+        {
+            resetTimer -= Time.deltaTime;
+
+            if(resetTimer < 0)
+            {
+                ResetLevel();
+            }
+        }
     }
 
     private void SpawnLevelParts()
@@ -164,23 +181,23 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        //this adds the checkpoints in the levelPart prefab to the overall list of all checkpoints
-        if (chosenLevelPart.GetComponent<CheckpointList>() != null)
-        {
-            checkpointManager.listOfChecks.AddRange(chosenLevelPart.GetComponent<CheckpointList>().checksList);
-            //now, we also need to update the variable on each checkpoint to reflect the correct order
+        lastLevelPartTransform = SpawnLevelPart(chosenLevelPart, lastEndPosition, lastEndRotation);
 
-            foreach (Transform check in chosenLevelPart.GetComponent<CheckpointList>().checksList)
+        if(lastLevelPartTransform != null)
+        {
+            foreach (Transform check in lastLevelPartTransform.GetComponent<CheckpointList>().checksList)
             {
+                checkpointCounter++;
 
                 check.gameObject.GetComponentInChildren<Checkpoint>().checkpointNumber = checkpointCounter;
 
-                checkpointCounter++;
+                checkpointManager.dictOfChecks.Add(check.gameObject.GetComponentInChildren<Checkpoint>().checkpointNumber, check.transform.position);
+
+
 
             }
         }
 
-        lastLevelPartTransform = SpawnLevelPart(chosenLevelPart, lastEndPosition, lastEndRotation);
 
         lastEndPosition = lastLevelPartTransform.Find("EndPosition").position;
         lastEndRotation = lastLevelPartTransform.Find("EndPosition").rotation;
@@ -283,16 +300,29 @@ public class LevelGenerator : MonoBehaviour
             //this adds the checkpoints in the levelPart prefab to the overall list of all checkpoints
             if(chosenLevelPart.GetComponent<CheckpointList>() != null)
             {
-                checkpointManager.listOfChecks.AddRange(chosenLevelPart.GetComponent<CheckpointList>().checksList);
-                //now, we also need to update the variable on each checkpoint to reflect the correct order
+                //checkpointManager.listOfChecks.AddRange(chosenLevelPart.GetComponent<CheckpointList>().checksList);
+                ////now, we also need to update the variable on each checkpoint to reflect the correct order
 
+                //foreach (Transform check in chosenLevelPart.GetComponent<CheckpointList>().checksList)
+                //{
+
+                //    check.gameObject.GetComponentInChildren<Checkpoint>().checkpointNumber = checkpointCounter;
+
+                //    checkpointCounter++;
+
+                //}
+
+
+
+                //dictionary version
                 foreach (Transform check in chosenLevelPart.GetComponent<CheckpointList>().checksList)
                 {
-
                     check.gameObject.GetComponentInChildren<Checkpoint>().checkpointNumber = checkpointCounter;
 
-                    checkpointCounter++;
+                    //checkpointManager.dictOfChecks.Add(check.gameObject.GetComponentInChildren<Checkpoint>().checkpointNumber, check.transform);
 
+
+                    checkpointCounter++;
                 }
             }
 
@@ -385,20 +415,26 @@ public class LevelGenerator : MonoBehaviour
 
         currentLevelParts.Clear();
         listOfRespawnPoints.Clear();
-        checkpointManager.listOfChecks.Clear();
+        //checkpointManager.listOfChecks.Clear();
+        checkpointManager.dictOfChecks.Clear();
         raceManager.GoalReached.Clear();
 
         lastEndPosition = levelPart_Start.Find("EndPosition").position;
 
         foreach (var racer in raceManager.RacersList)
         {
+            if (racer.GetComponent<MLADrive2>() != null)
+            {
+                racer.GetComponent<MLADrive2>().EndEpisode();
+            }
+
             racer.GetComponent<ShipController>().transform.position = racer.GetComponent<ShipController>().originPoint;
             racer.GetComponent<ShipController>().ammo = racer.GetComponent<ShipController>().maxAmmo;
             racer.GetComponent<ShipController>().fuel = racer.GetComponent<ShipController>().maxFuel;
             racer.GetComponent<DamageManager>().hitPoints = racer.GetComponent<DamageManager>().maxHitPoints;
 
             racer.GetComponent<ShipController>().lastCheckpoint = null;
-            racer.GetComponent<ShipController>().nextCheckpoint = null;
+            racer.GetComponent<ShipController>().nextCheckpointTransform = Vector3.zero;
             racer.GetComponent<ShipController>().lastCheckpointNumber = 0;
 
             racer.transform.rotation = Quaternion.identity;
@@ -406,6 +442,8 @@ public class LevelGenerator : MonoBehaviour
             //later, should add a system that enables controls shortly after race is ready to begin, with a little countdown to start
             racer.GetComponent<ShipController>().controlsEnabled = true;
         }
+
+        resetTimer = defResetTimer;
 
         SpawnLevelParts();
         started = true;

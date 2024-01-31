@@ -88,8 +88,14 @@ public class MLADrive2 : Agent
         sensor.AddObservation(GetComponent<DamageManager>().hitPoints);
 
         //one example I found used an observation like this, but I'm not sure if I want it... remove it for now, might be more relevant later once I fix racer order list
-        //sensor.AddObservation(GetComponent<ShipController>().distanceToNextCheckpoint);
+        //testing adding it back in
+        sensor.AddObservation(GetComponent<ShipController>().distanceToNextCheckpoint);
 
+        //I'll try giving sensors info about timeout
+        if (GetComponent<ShipController>().useTimeout)
+        {
+            sensor.AddObservation(GetComponent<ShipController>().timeout);
+        }
 
         //several examples have also shown that we can add some rewards in here, such as a small negative reward over time, or a small positive reward for going at speed
 
@@ -97,7 +103,7 @@ public class MLADrive2 : Agent
         //controls must be enabled or else it might sit in the goal waiting and get a poor reward
         if(GetComponent<ShipController>().controlsEnabled)
         {
-            AddReward(-.001f);
+            AddReward(-.01f);
         }
     }
 

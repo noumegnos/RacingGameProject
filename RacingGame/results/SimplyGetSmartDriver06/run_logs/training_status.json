@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 2499971,
+                "file_path": "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-2499971.onnx",
+                "reward": -0.23634326435736755,
+                "creation_time": 1706567756.987181,
+                "auxillary_file_paths": [
+                    "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-2499971.pt"
+                ]
+            },
+            {
+                "steps": 2999997,
+                "file_path": "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-2999997.onnx",
+                "reward": -0.39481553197973995,
+                "creation_time": 1706568620.9025705,
+                "auxillary_file_paths": [
+                    "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-2999997.pt"
+                ]
+            },
+            {
+                "steps": 3499907,
+                "file_path": "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-3499907.onnx",
+                "reward": -0.1982710428413396,
+                "creation_time": 1706569553.688841,
+                "auxillary_file_paths": [
+                    "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-3499907.pt"
+                ]
+            },
+            {
+                "steps": 3999989,
+                "file_path": "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-3999989.onnx",
+                "reward": -1.0136500325985254,
+                "creation_time": 1706570465.2108665,
+                "auxillary_file_paths": [
+                    "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-3999989.pt"
+                ]
+            },
+            {
+                "steps": 4000761,
+                "file_path": "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-4000761.onnx",
+                "reward": -1.4427143247531993,
+                "creation_time": 1706570465.2528875,
+                "auxillary_file_paths": [
+                    "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-4000761.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 4000761,
+            "file_path": "results\\SimplyGetSmartDriver06\\TunnelDriverTest.onnx",
+            "reward": -1.4427143247531993,
+            "creation_time": 1706570465.2528875,
+            "auxillary_file_paths": [
+                "results\\SimplyGetSmartDriver06\\TunnelDriverTest\\TunnelDriverTest-4000761.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

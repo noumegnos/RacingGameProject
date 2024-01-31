@@ -13,6 +13,8 @@ public class TrafficSpawner : MonoBehaviour
     public List<GameObject> carsToSpawn = new List<GameObject>();
     public float timer;
 
+    public bool randomStartTimer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +29,13 @@ public class TrafficSpawner : MonoBehaviour
 
     public IEnumerator SpawnCars()
     {
+        if(randomStartTimer)
+        {
+            yield return new WaitForSeconds(Random.Range(0f, timer));
+
+            randomStartTimer = false;
+        }
+
         int choice = Random.Range(0, carsToSpawn.Count);
 
         GameObject car = Instantiate(carsToSpawn[choice], transform.position, transform.rotation);

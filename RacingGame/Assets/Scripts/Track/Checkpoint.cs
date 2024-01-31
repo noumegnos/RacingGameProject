@@ -39,19 +39,34 @@ public class Checkpoint : MonoBehaviour
     {
         if(other.GetComponent<ShipController>() != null)
         {
-            other.GetComponent<ShipController>().lastCheckpoint = this.gameObject;
-
-            other.GetComponent<ShipController>().lastCheckpointNumber = checkpointNumber;
-
             if (!other.GetComponent<ShipController>().isHuman)
             {
-                other.GetComponent<MLADrive2>().AddReward(0.01f);
+                if(other.GetComponent<ShipController>().lastCheckpointNumber < checkpointNumber || other.GetComponent<ShipController>().lastCheckpointNumber == 0)
+                {
+                    other.GetComponent<ShipController>().timeout = other.GetComponent<ShipController>().defTimeout;
+
+                    other.GetComponent<MLADrive2>().AddReward(0.2f);
+                    other.GetComponent<MLADrive2>().EndEpisode();
+                }
+                
+                if(other.GetComponent<ShipController>().lastCheckpointNumber > checkpointNumber)
+                {
+                    other.GetComponent<MLADrive2>().AddReward(-0.5f);
+                }
             }
 
-            if(other.GetComponent<ShipController>().checkpointManager.listOfChecks.Count > checkpointNumber + 1) 
+            if (other.GetComponent<ShipController>().lastCheckpointNumber < checkpointNumber || other.GetComponent<ShipController>().lastCheckpointNumber == 0)
             {
-                other.GetComponent<ShipController>().nextCheckpoint = other.GetComponent<ShipController>().checkpointManager.listOfChecks[checkpointNumber + 1].GetComponentInChildren<Checkpoint>().gameObject;
+                other.GetComponent<ShipController>().lastCheckpoint = this.gameObject;
 
+                other.GetComponent<ShipController>().lastCheckpointNumber = checkpointNumber;
+
+            }
+
+
+            if (other.GetComponent<ShipController>().checkpointManager.dictOfChecks.Count > checkpointNumber)
+            {
+                other.GetComponent<ShipController>().nextCheckpointTransform = other.GetComponent<ShipController>().checkpointManager.dictOfChecks[checkpointNumber + 1];
             }
             else
             {

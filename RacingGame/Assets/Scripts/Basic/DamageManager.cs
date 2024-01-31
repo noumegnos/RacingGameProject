@@ -48,7 +48,7 @@ public class DamageManager : MonoBehaviour
     {
         if(GetComponent<MLADrive2>() != null)
         {
-            GetComponent<MLADrive2>().AddReward(-.05f);
+            GetComponent<MLADrive2>().AddReward(-.005f);
         }
 
 

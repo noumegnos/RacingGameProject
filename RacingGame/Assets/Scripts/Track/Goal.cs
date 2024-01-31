@@ -37,9 +37,24 @@ public class Goal : MonoBehaviour
 
             raceManager.GoalReached.Add(other.gameObject);
 
-            if(!other.gameObject.GetComponent<ShipController>().isHuman)
+            //if(!levelGenerator.useResetTimer)
+            //{
+            //    levelGenerator.useResetTimer = true;
+
+
+            //}
+
+            if (levelGenerator.resetTimer > 1800f)
             {
+                levelGenerator.resetTimer = 1800;
+            }
+
+            if (!other.gameObject.GetComponent<ShipController>().isHuman)
+            {
+                other.GetComponent<ShipController>().timeout = other.GetComponent<ShipController>().defTimeout;
+
                 other.gameObject.GetComponent<MLADrive2>().AddReward(1f / raceManager.GoalReached.Count);
+                //other.gameObject.GetComponent<MLADrive2>().EndEpisode();
             }
 
             if(raceManager.GoalReached.Count >= racersInGoalBeforeReset)
