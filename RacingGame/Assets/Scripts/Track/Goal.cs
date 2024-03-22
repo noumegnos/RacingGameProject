@@ -13,14 +13,24 @@ public class Goal : MonoBehaviour
     public RaceManager raceManager;
     public LevelGenerator levelGenerator;
 
+    public bool restartOnGoal;
+
     //how many racers should reach goal before the track resets
     public int racersInGoalBeforeReset = 3;
+
+    //racers who have reached the goal will be placed in the goal holder to preserve their position (must be a better way ugh)
+    public Transform goalHolder;
+    int goalCount;
+
 
     // Start is called before the first frame update
     void Start()
     {
         raceManager = GameObject.FindObjectOfType<RaceManager>();
         levelGenerator = GameObject.FindObjectOfType<LevelGenerator>();
+
+        //restartOnGoal = !raceManager.careerMode;
+
     }
 
     // Update is called once per frame
@@ -35,7 +45,18 @@ public class Goal : MonoBehaviour
         {
             other.GetComponent<ShipController>().controlsEnabled = false;
 
+            if (other.gameObject.GetComponentInChildren<CharacterSheet>() != null && goalCount == 0) // && raceManager.GoalReached.Count == 0)
+            {
+                other.gameObject.GetComponentInChildren<CharacterSheet>().wins += 1;
+            }
+
             raceManager.GoalReached.Add(other.gameObject);
+            raceManager.UpdateVictoryList();
+
+            other.gameObject.transform.position = goalHolder.GetChild(goalCount).transform.position;
+            goalCount++;
+
+
 
             //if(!levelGenerator.useResetTimer)
             //{
@@ -57,11 +78,19 @@ public class Goal : MonoBehaviour
                 //other.gameObject.GetComponent<MLADrive2>().EndEpisode();
             }
 
-            if(raceManager.GoalReached.Count >= racersInGoalBeforeReset)
+            if(restartOnGoal)
             {
-                levelGenerator.ResetLevel();
+                if (raceManager.GoalReached.Count >= racersInGoalBeforeReset)
+                {
+                    levelGenerator.ResetLevel();
+                }
             }
 
+            if (other.gameObject.GetComponent<ShipController>().isHuman && !restartOnGoal)
+            {
+                //raceManager.OnRaceFinished();
+                raceManager.EnableVictoryScreen();
+            }
         }
     }
 }

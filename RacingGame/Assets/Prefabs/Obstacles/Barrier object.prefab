@@ -178,9 +178,13 @@ MonoBehaviour:
   refuel: 1
   reammo: 0
   repair: 0
+  money: 0
   fuelAmount: 5
   ammoAmount: 0
   repairAmount: 0
+  moneyAmount: 0
+  singleUse: 0
+  powerUpEffect: {fileID: 5417709737459649442, guid: 0f3571f6bcbd89d40a7caa80dd111513, type: 3}
 --- !u!1 &8363387331795059362
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,6 +331,84 @@ BoxCollider:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1c0d6b848f86c44997963d802d8ef6a, type: 3}
   m_PrefabInstance: {fileID: 1821753175255644912}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2172017210731536383
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4913064936667987257}
+    m_Modifications:
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2025141017584482005, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+      propertyPath: m_Name
+      value: Sparks Particle System
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+--- !u!4 &1646115661789876606 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 647572062562504321, guid: e83fb8952a4355547a2ec04bc017174c, type: 3}
+  m_PrefabInstance: {fileID: 2172017210731536383}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6606357025409244668
 PrefabInstance:
@@ -547,6 +629,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 5c15df867e8f181439eefbba11f1d680, type: 2}
+    - target: {fileID: -678588488315902003, guid: 39ff99709d7ccc9489f5b7eeae6c8ac3, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5c15df867e8f181439eefbba11f1d680, type: 2}
     - target: {fileID: -516098083770646512, guid: 39ff99709d7ccc9489f5b7eeae6c8ac3, type: 3}
       propertyPath: m_Layer
       value: 11
@@ -565,7 +651,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4083501151425157549, guid: 39ff99709d7ccc9489f5b7eeae6c8ac3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1646115661789876606}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -516098083770646512, guid: 39ff99709d7ccc9489f5b7eeae6c8ac3, type: 3}
       insertIndex: -1
@@ -612,7 +701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b80d53b503b7954bba73d5958528682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitPoints: 1
+  maxHitPoints: 2
   hitPoints: 0
   isRacer: 0
   spawnBrokenPartsOnDeath: 0
@@ -625,9 +714,20 @@ MonoBehaviour:
   useSpecificObjectTransform: 0
   specificObjectTransform: {fileID: 0}
   carMove: {fileID: 0}
+  dropPickupOnDeath: 0
+  chanceToDrop: 0
+  drops: []
+  doExplode: 0
+  explosion: {fileID: 0}
+  doSparks: 1
 --- !u!1 &597200712145773937 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8416272007918961125, guid: 39ff99709d7ccc9489f5b7eeae6c8ac3, type: 3}
+  m_PrefabInstance: {fileID: 8972635208907875476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4913064936667987257 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4083501151425157549, guid: 39ff99709d7ccc9489f5b7eeae6c8ac3, type: 3}
   m_PrefabInstance: {fileID: 8972635208907875476}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &6942088320653740261 stripped

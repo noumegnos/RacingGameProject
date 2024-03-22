@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 2499947,
+                "file_path": "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-2499947.onnx",
+                "reward": -2.846520145237446,
+                "creation_time": 1706705363.5793061,
+                "auxillary_file_paths": [
+                    "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-2499947.pt"
+                ]
+            },
+            {
+                "steps": 2999988,
+                "file_path": "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-2999988.onnx",
+                "reward": -1.181042581955169,
+                "creation_time": 1706706693.8828995,
+                "auxillary_file_paths": [
+                    "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-2999988.pt"
+                ]
+            },
+            {
+                "steps": 3499977,
+                "file_path": "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-3499977.onnx",
+                "reward": -1.0977640010709508,
+                "creation_time": 1706708114.0443113,
+                "auxillary_file_paths": [
+                    "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-3499977.pt"
+                ]
+            },
+            {
+                "steps": 3999758,
+                "file_path": "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-3999758.onnx",
+                "reward": -2.2604705906089615,
+                "creation_time": 1706709668.9362626,
+                "auxillary_file_paths": [
+                    "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-3999758.pt"
+                ]
+            },
+            {
+                "steps": 4000094,
+                "file_path": "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-4000094.onnx",
+                "reward": -2.3988333580394587,
+                "creation_time": 1706709668.97219,
+                "auxillary_file_paths": [
+                    "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-4000094.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 4000094,
+            "file_path": "results\\LearnInfiniteLevels01\\TunnelDriverTest.onnx",
+            "reward": -2.3988333580394587,
+            "creation_time": 1706709668.97219,
+            "auxillary_file_paths": [
+                "results\\LearnInfiniteLevels01\\TunnelDriverTest\\TunnelDriverTest-4000094.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

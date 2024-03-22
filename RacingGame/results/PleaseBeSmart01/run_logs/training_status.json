@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 2499510,
+                "file_path": "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-2499510.onnx",
+                "reward": -13.85391757885615,
+                "creation_time": 1706796829.9379463,
+                "auxillary_file_paths": [
+                    "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-2499510.pt"
+                ]
+            },
+            {
+                "steps": 2999934,
+                "file_path": "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-2999934.onnx",
+                "reward": -3.035224368355491,
+                "creation_time": 1706797455.5954223,
+                "auxillary_file_paths": [
+                    "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-2999934.pt"
+                ]
+            },
+            {
+                "steps": 3499046,
+                "file_path": "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-3499046.onnx",
+                "reward": -6.5956910769370465,
+                "creation_time": 1706798157.4891684,
+                "auxillary_file_paths": [
+                    "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-3499046.pt"
+                ]
+            },
+            {
+                "steps": 3999957,
+                "file_path": "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-3999957.onnx",
+                "reward": -16.051301035284997,
+                "creation_time": 1706798913.9935195,
+                "auxillary_file_paths": [
+                    "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-3999957.pt"
+                ]
+            },
+            {
+                "steps": 4000957,
+                "file_path": "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-4000957.onnx",
+                "reward": -20.18145564198494,
+                "creation_time": 1706798914.0491185,
+                "auxillary_file_paths": [
+                    "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-4000957.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 4000957,
+            "file_path": "results\\PleaseBeSmart01\\TunnelDriverTest.onnx",
+            "reward": -20.18145564198494,
+            "creation_time": 1706798914.0491185,
+            "auxillary_file_paths": [
+                "results\\PleaseBeSmart01\\TunnelDriverTest\\TunnelDriverTest-4000957.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

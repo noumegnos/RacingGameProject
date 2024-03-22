@@ -27,7 +27,8 @@ public class LevelGenerator : MonoBehaviour
     public int countUntilGoal;
     int defCountUntilGoal;
 
-    [SerializeField] private Transform levelPart_Start;
+    //[SerializeField] private Transform levelPart_Start;
+    public Transform levelPart_Start;
     [SerializeField] private GameObject player;
     Transform chosenLevelPart;
 
@@ -36,6 +37,7 @@ public class LevelGenerator : MonoBehaviour
     public bool started = false;
     public bool randomLevels = false;
     public bool infiniteLevel = false;
+    public bool randomLevelLength;
 
     public bool useOrdersList = false;
 
@@ -47,6 +49,7 @@ public class LevelGenerator : MonoBehaviour
     private Quaternion lastEndRotation;
 
     public List<Transform> currentLevelParts = new List<Transform>();
+    public int maxiumumCurrentLevelParts; //been using 100 during testing
 
     //by adding to a count every time a level part is spawned,
     //we can make every X parts be a certain kind of part
@@ -85,6 +88,8 @@ public class LevelGenerator : MonoBehaviour
     public float resetTimer;
     public float defResetTimer;
 
+    public GameObject camObject; 
+
     //in the Awake, we look for the EndPosition of the initial levelPart
     private void Awake()
     {
@@ -105,6 +110,14 @@ public class LevelGenerator : MonoBehaviour
 
         partsCount = partsUntilChangeList;
 
+        randomLevelLength = raceManager.randomLevelLength;
+        infiniteLevel = raceManager.infiniteLevel;
+
+        if (randomLevelLength)
+        {
+            countUntilGoal = Random.Range(5, raceManager.maxLevelLength);
+        }
+
         if (randomLevels)
         {
             lastEndPosition = levelPart_Start.Find("EndPosition").position;
@@ -114,6 +127,11 @@ public class LevelGenerator : MonoBehaviour
         }
 
         defResetTimer = resetTimer;
+
+        if(raceManager.careerMode)
+        {
+            useResetTimer = false;
+        }
 
 
     }
@@ -125,26 +143,51 @@ public class LevelGenerator : MonoBehaviour
         {
             if(useOrdersList)
             {
-                if(countUntilGoal > -1)
+                if(!infiniteLevel)
+                {
+                    if (countUntilGoal > -1)
+                    {
+                        if(raceManager != null && raceManager.Orders != null)
+                        {
+                            if(raceManager.Orders.Count > 0)
+                            {
+                                if (Vector3.Distance(raceManager.Orders[0].transform.position, lastEndPosition) < PLAYER_DISTANCE_SPAWN_LEVEL_PART)
+                                {
+                                    SpawnLevelParts();
+                                }
+                            }
+                            else
+                            {
+                                SpawnLevelParts();
+                            }
+                        }
+                        else
+                        {
+                            SpawnLevelParts();
+                        }
+
+                    }
+                }
+                else
                 {
                     if (Vector3.Distance(raceManager.Orders[0].transform.position, lastEndPosition) < PLAYER_DISTANCE_SPAWN_LEVEL_PART)
                     {
                         SpawnLevelParts();
                     }
                 }
-
             }
-            else
-            {
-                if(countUntilGoal > -1)
-                {
-                    if (Vector3.Distance(player.transform.position, lastEndPosition) < PLAYER_DISTANCE_SPAWN_LEVEL_PART)
-                    {
-                        SpawnLevelParts();
-                    }
-                }
-            }
+            //else
+            //{
+            //    if(countUntilGoal > -1)
+            //    {
+            //        if (Vector3.Distance(player.transform.position, lastEndPosition) < PLAYER_DISTANCE_SPAWN_LEVEL_PART)
+            //        {
+            //            SpawnLevelParts();
+            //        }
+            //    }
+            //}
         }
+
 
         //reset level
         if (Input.GetKeyDown(KeyCode.R))
@@ -168,9 +211,9 @@ public class LevelGenerator : MonoBehaviour
     private void SpawnLevelParts()
     {
         //for now there are only random levels
-        if(randomLevels)
+        if (randomLevels)
         {
-            if(countUntilGoal > 0)
+            if (countUntilGoal > 0 || infiniteLevel)
             {
                 chosenLevelPart = listOfLists[currentList][Random.Range(0, listOfLists[currentList].Count)];
 
@@ -183,7 +226,7 @@ public class LevelGenerator : MonoBehaviour
 
         lastLevelPartTransform = SpawnLevelPart(chosenLevelPart, lastEndPosition, lastEndRotation);
 
-        if(lastLevelPartTransform != null)
+        if (lastLevelPartTransform != null)
         {
             foreach (Transform check in lastLevelPartTransform.GetComponent<CheckpointList>().checksList)
             {
@@ -197,6 +240,9 @@ public class LevelGenerator : MonoBehaviour
 
             }
         }
+
+
+
 
 
         lastEndPosition = lastLevelPartTransform.Find("EndPosition").position;
@@ -384,7 +430,10 @@ public class LevelGenerator : MonoBehaviour
     {
         Transform levelPartTransform = Instantiate(levelPart, spawnPos, spawnRot);
 
-        countUntilGoal--;
+        if(!infiniteLevel)
+        {
+            countUntilGoal--;
+        }
 
         if (levelPartTransform.GetComponentInChildren<SetRespawnRotation>() != null)
         {
@@ -393,7 +442,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         currentLevelParts.Add(levelPartTransform);
-        if (currentLevelParts.Count > 300)
+        if (currentLevelParts.Count > maxiumumCurrentLevelParts)
         {
             Destroy(currentLevelParts[0].gameObject);
             currentLevelParts.Remove(currentLevelParts[0]);
@@ -404,6 +453,11 @@ public class LevelGenerator : MonoBehaviour
 
     public void ResetLevel()
     {
+        started = false;
+        raceManager.updateOrders = false;
+
+        Destroy(camObject);
+
         foreach (var levelPart in currentLevelParts)
         {
             Destroy(levelPart.gameObject);
@@ -413,40 +467,69 @@ public class LevelGenerator : MonoBehaviour
 
         countUntilGoal = defCountUntilGoal;
 
+        if (randomLevelLength)
+        {
+            countUntilGoal = Random.Range(5, 30);
+        }
+
+        StopCoroutine(raceManager.UpdateOrderedList());
         currentLevelParts.Clear();
         listOfRespawnPoints.Clear();
         //checkpointManager.listOfChecks.Clear();
         checkpointManager.dictOfChecks.Clear();
-        raceManager.GoalReached.Clear();
+
 
         lastEndPosition = levelPart_Start.Find("EndPosition").position;
 
-        foreach (var racer in raceManager.RacersList)
+        foreach (var racer in raceManager.RacersInRace)
         {
-            if (racer.GetComponent<MLADrive2>() != null)
+            if(racer.GetComponent<MLADrive2>() != null)
             {
                 racer.GetComponent<MLADrive2>().EndEpisode();
             }
 
-            racer.GetComponent<ShipController>().transform.position = racer.GetComponent<ShipController>().originPoint;
-            racer.GetComponent<ShipController>().ammo = racer.GetComponent<ShipController>().maxAmmo;
-            racer.GetComponent<ShipController>().fuel = racer.GetComponent<ShipController>().maxFuel;
-            racer.GetComponent<DamageManager>().hitPoints = racer.GetComponent<DamageManager>().maxHitPoints;
-
-            racer.GetComponent<ShipController>().lastCheckpoint = null;
-            racer.GetComponent<ShipController>().nextCheckpointTransform = Vector3.zero;
-            racer.GetComponent<ShipController>().lastCheckpointNumber = 0;
-
-            racer.transform.rotation = Quaternion.identity;
-
-            //later, should add a system that enables controls shortly after race is ready to begin, with a little countdown to start
-            racer.GetComponent<ShipController>().controlsEnabled = true;
+            Destroy(racer.gameObject);
         }
+
+        raceManager.RacersInRace.Clear();
+        raceManager.GoalReached.Clear();
+        raceManager.Orders.Clear();
+
+        raceManager.SpawnRacers();
+
+
+        //foreach (var racer in raceManager.RacersList)
+        //{
+        //    if (racer.GetComponent<MLADrive2>() != null)
+        //    {
+        //        racer.GetComponent<MLADrive2>().EndEpisode();
+        //    }
+
+        //    racer.GetComponent<ShipController>().transform.position = racer.GetComponent<ShipController>().originPoint;
+        //    racer.GetComponent<ShipController>().ammo = racer.GetComponent<ShipController>().maxAmmo;
+        //    racer.GetComponent<ShipController>().fuel = racer.GetComponent<ShipController>().maxFuel;
+        //    racer.GetComponent<DamageManager>().hitPoints = racer.GetComponent<DamageManager>().maxHitPoints;
+
+        //    racer.GetComponent<ShipController>().lastCheckpoint = null;
+        //    racer.GetComponent<ShipController>().nextCheckpointTransform = Vector3.zero;
+        //    racer.GetComponent<ShipController>().lastCheckpointNumber = 0;
+        //    racer.GetComponent<ShipController>().respawnIsOrigin = true;
+
+        //    racer.transform.rotation = Quaternion.identity;
+
+        //    //later, should add a system that enables controls shortly after race is ready to begin, with a little countdown to start
+        //    racer.GetComponent<ShipController>().controlsEnabled = true;
+        //}
 
         resetTimer = defResetTimer;
 
         SpawnLevelParts();
         started = true;
+
+        raceManager.GetComponentInChildren<Animator>().SetBool("startCount", true);
+        raceManager.GetComponentInChildren<Animator>().Play("startcount", -1, 0f);
+        //raceManager.GetComponentInChildren<Animation>().Play("startcount");
+
 
     }
 }

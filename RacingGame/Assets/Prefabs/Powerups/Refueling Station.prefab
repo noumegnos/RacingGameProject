@@ -138,8 +138,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.9999997, y: 0.5362197, z: 0.9999997}
+  m_Center: {x: 0, y: 0.23188607, z: 0}
 --- !u!114 &7503276726972746783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,9 +155,13 @@ MonoBehaviour:
   refuel: 1
   reammo: 1
   repair: 1
-  fuelAmount: 50
-  ammoAmount: 50
-  repairAmount: 50
+  money: 0
+  fuelAmount: 20
+  ammoAmount: 10
+  repairAmount: 20
+  moneyAmount: 0
+  singleUse: 0
+  powerUpEffect: {fileID: 5417709737459649442, guid: 0f3571f6bcbd89d40a7caa80dd111513, type: 3}
 --- !u!1001 &5526106576914131154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -304,6 +308,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7c7d8a033f226d644a7d0a4ef9ea0ea5, type: 2}
+    - target: {fileID: -804731622281664130, guid: 70467e3ed9e6a794f9b6e295b9d814d2, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0d670dec9b21ed14a9273400994a6904, type: 2}
     - target: {fileID: -678588488315902003, guid: 70467e3ed9e6a794f9b6e295b9d814d2, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

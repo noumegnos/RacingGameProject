@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
@@ -38,8 +39,12 @@ public class ShipController : MonoBehaviour
     public float maxAmmo; //total ammo for weapon
     public float ammo; //current ammo for weapon
     public float ammoConsumption; //rate of ammo loss while shooting
-    public int weaponDamage; //damage done by weapon
+    public float weaponDamage; //damage done by weapon
     bool canShoot;
+
+    //public Transform shotPoint;
+
+    public float currentSpeed;
 
     //Temporary Stats. These are added to the ship when you hit a power up
     public float speedMod = 0f; //added to maxSpeed and accelerationStat when hit speed boost
@@ -56,7 +61,7 @@ public class ShipController : MonoBehaviour
     public float speedCooldown = 1f; //a cooldown for speedMod and slowMod 
     float defaultSpeedCooldown;
     public float shootCooldown;
-    float defaultShootCooldown;
+    public float defaultShootCooldown;
 
     //layers are used to detect the world around the ship via Raycasts
     public LayerMask Ground; //only the ground layer (but could make it all layers that can act like ground, since you can drive on top of cars as well - but they can be ground layer no problem)
@@ -101,6 +106,7 @@ public class ShipController : MonoBehaviour
     public bool ground2;
     public bool ground3;
     public bool ground4;
+    public float hitDistance; //how far away is the furthest ground checker hit, if this exceeds the ground checker rays distance, give agent a penalty for being off track
 
     public bool canJump;
     public bool isJumping;
@@ -123,6 +129,8 @@ public class ShipController : MonoBehaviour
     //other script references
     DamageManager damageManager; //damage manager handles hit points and taking damage; all damageable objects have this script
     public CheckpointManager checkpointManager; //checkpoint manager contains a list of all checkpoints... is this necessary?
+    public LevelGenerator levelGenerator;
+    public RaceManager raceManager;
 
     //checkpoint handling
     //checkpoints are used to keep track of how far a ship has traveled, and to reposition the ship in case it gets destroyed or falls off the track
@@ -132,12 +140,43 @@ public class ShipController : MonoBehaviour
     public Vector3 nextCheckpointTransform; //not sure if needed, more of a test of a system (could be used for ML agents)
     public Vector3 originPoint; //this is the starting location
     public float distanceToNextCheckpoint;
-
+    public bool respawnIsOrigin; //respawn point is the origin point at the start, at which point lastCheckpoint is null. But last checkpoint can also become null if the track is long enough, in which case FindOldestExistingCheckpoint is called from level generator
     public int lastCheckpointNumber;
 
-    //next checkpoint could be used to gauge the positions of the ships in the race
-    //we just need a distance check to the next one, and to use this value in the RaceManager's orders
+    public float aimShootTime; //when you hold the shoot button for this amount of time, the shot will attempt to aim at a nearby ship
+    public float defAimShootTime;
+    public float aimWidth; //this determines how far away on the X and Y axes an aim shot can be - 0 would mean it can only shoot straight ahead, from testing 5 can shoot nearly 90degrees
+    public float shootRange;
 
+    public float weaponSlowMod; //when a ship shoots another, that ship is slowed by this value
+
+    public float gotShotMod; //if a ship is hit by a weapon from another ship, it slows down a little by this value
+    float defGotShotMod;
+
+    public int myPositionInRace;
+
+    public float turnValue; //this float is based on input, before collision modifies it; used by animations
+
+    public WeaponsSystems weaponsSystems; //given by create ship model
+    public bool waitForTarget;
+    public bool targetting;
+    //public float targettingTime;
+
+    //if career mode is on, ships are not automatically repaired when repositioned, and racer will lose if hit points go to 0
+    public bool careerMode;
+
+    //while the agent is training, a number of its stats are randomized
+    public bool inTraining;
+
+    public MainMenuScript mainMenu;
+
+    //private void Awake()
+    //{
+    //    if (shotPoint == null)
+    //    {
+    //        shotPoint = transform;
+    //    }
+    //}
 
     // Start is called before the first frame update
     void Start()
@@ -146,6 +185,13 @@ public class ShipController : MonoBehaviour
         col = GetComponent<Collider>();
         damageManager = GetComponent<DamageManager>();
         checkpointManager = GameObject.Find("CheckpointManager").GetComponent<CheckpointManager>();
+
+        levelGenerator = GameObject.FindObjectOfType<LevelGenerator>();
+        raceManager = GameObject.FindObjectOfType<RaceManager>();
+
+        mainMenu = GameObject.FindObjectOfType<MainMenuScript>();
+
+        //mainMenu = GameObject.Find("MainMenu").GetComponent<MainMenuScript>();
 
         defaultJumpCooldown = jumpCooldown;
         defaultSpeedCooldown = speedCooldown;
@@ -157,11 +203,18 @@ public class ShipController : MonoBehaviour
         defFallTime = fallTime;
         defJumpSpeed = jumpSpeed;
 
+        defGotShotMod = gotShotMod;
+
         defTimeout = timeout;
 
+        defAimShootTime = aimShootTime;
+
+        respawnIsOrigin = true;
         originPoint = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
         nextCheckpointTransform = checkpointManager.dictOfChecks[1];
+
+
 
     }
 
@@ -170,6 +223,30 @@ public class ShipController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(isHuman)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                print("pause key");
+                if (mainMenu.pauseMenuButtonHolder.activeSelf)
+                {
+                    //ToggleMenuOff();
+
+                    mainMenu.PauseMenuOff();
+
+                    //mainMenu.UnpauseTime();
+
+                }
+                else
+                {
+                    //ToggleMenuOn();
+                    mainMenu.PauseMenuOn();
+                    //mainMenu.PauseTime();
+                }
+            }
+        }
+
+
         //if(controlsEnabled)
         //{
         //    if (isHuman)
@@ -261,7 +338,7 @@ public class ShipController : MonoBehaviour
         //    }
         //}
 
-        if(controlsEnabled && !isHuman && useTimeout)
+        if (controlsEnabled && !isHuman && useTimeout)
         {
             timeout -= Time.deltaTime;
 
@@ -328,6 +405,11 @@ public class ShipController : MonoBehaviour
                 speedCooldown = defaultSpeedCooldown;
             }
         }
+
+        if(gotShotMod != defGotShotMod)
+        {
+            gotShotMod = Mathf.Lerp(gotShotMod, defGotShotMod, 2f * Time.deltaTime);
+        }
     }
 
     public void Inputs()
@@ -351,32 +433,74 @@ public class ShipController : MonoBehaviour
                     acceleration = 0f;
                 }
 
-                if (Input.GetKey(KeyCode.Z))
+                if (Input.GetKey(KeyCode.Z) && fuel >= 0f)
                 {
                     //nitro boost
-                    if (fuel >= 0f)
-                    {
-                        fuel -= fuelConsumption * Time.deltaTime;
-                        nitroBoost = nitroBoostStat;
-                    }
+                    fuel -= fuelConsumption * Time.deltaTime;
+                    nitroBoost = nitroBoostStat;
                 }
                 else
                 {
                     nitroBoost = 0f;
                 }
 
-                if (Input.GetKey(KeyCode.X))
+                if(!waitForTarget)
                 {
-                    //shooting
-                    //the shot origin point should be at the ship's model, instead of this object, which means I have to GetComponent it somehow 
-                    //but lets make it work properly first
 
-                    if (canShoot)
+                    if (Input.GetKey(KeyCode.X) && canShoot)
                     {
-                        Shoot();
-                        canShoot = false;
+                        aimShootTime -= Time.deltaTime;
+
+                        if (aimShootTime <= 0f)
+                        {
+                            if (canShoot)
+                            {
+                                TakeAim();
+                                canShoot = false;
+                                aimShootTime = defAimShootTime;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (aimShootTime < defAimShootTime)
+                        {
+                            aimShootTime = defAimShootTime;
+
+                            if (canShoot)
+                            {
+                                weaponsSystems.Fire(null);
+
+                                canShoot = false;
+                            }
+                        }
                     }
                 }
+                else
+                {
+                    //wait for target to be acquired before shooting while holding button
+
+                    if(Input.GetKey(KeyCode.X))
+                    {
+                        targetting = true;
+                        AcquireTarget();
+                    }
+                    else if (targetting)
+                    {
+                        if (canShoot)
+                        {
+                            TakeAim();
+                            targetting = false;
+                            canShoot = false;
+                        }
+                    }
+                    else
+                    {
+                        targetting = false;
+
+                    }
+                }
+
             }
             else
             {
@@ -387,13 +511,11 @@ public class ShipController : MonoBehaviour
                 //jump is in FixedUpdate
 
                 //also nitro
-                if (GetComponent<MLADrive2>().boost != 0)
+                if (GetComponent<MLADrive2>().boost != 0 && fuel >= 0f)
                 {
-                    if (fuel >= 0f)
-                    {
-                        fuel -= fuelConsumption * Time.deltaTime;
-                        nitroBoost = nitroBoostStat;
-                    }
+                    fuel -= fuelConsumption * Time.deltaTime;
+                    nitroBoost = nitroBoostStat;
+
                 }
                 else
                 {
@@ -403,11 +525,32 @@ public class ShipController : MonoBehaviour
                 //also shooting
                 if (GetComponent<MLADrive2>().shoot != 0)
                 {
-                    if (canShoot)
+                    aimShootTime -= Time.deltaTime;
+
+                    if (aimShootTime <= 0f)
                     {
-                        Shoot();
-                        canShoot = false;
+                        if (canShoot)
+                        {
+                            TakeAim();
+                            canShoot = false;
+                            aimShootTime = defAimShootTime;
+                        }
                     }
+                }
+                else
+                {
+                    if(aimShootTime < defAimShootTime)
+                    {
+                        aimShootTime = defAimShootTime;
+
+                        if(canShoot)
+                        {
+                            weaponsSystems.Fire(null);
+                            canShoot = false;
+                        }
+                    }
+
+                    aimShootTime = defAimShootTime;
                 }
             }
 
@@ -424,75 +567,185 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    public void Shoot()
+    public void AcquireTarget()
     {
-        if(ammo > 0f)
+        if (myPositionInRace > 0)
         {
-            ammo -= ammoConsumption;
-
-            //Debug.DrawRay(transform.position, Vector3.forward * 20f, Color.green); //this was nice for testing but is invisible now that shot is only one frame
-
-            RaycastHit hit;
-
-            Ray ray = new Ray(transform.position, transform.forward);
-
-            if (Physics.Raycast(ray, out hit, 20f, allCollidingLayers))
+            if (raceManager.Orders[myPositionInRace - 1].transform.position.z - transform.position.z < shootRange)
             {
-                if (hit.collider.GetComponent<DamageManager>() != null)
+                GameObject target = raceManager.Orders[myPositionInRace - 1];
+
+                if (Mathf.Abs(raceManager.Orders[myPositionInRace - 1].transform.position.x - transform.position.x) < aimWidth && Mathf.Abs(raceManager.Orders[myPositionInRace - 1].transform.position.y - transform.position.y) < aimWidth)
                 {
-                    hit.collider.GetComponent<DamageManager>().TakeDamage(weaponDamage);
-
-                    //print("reward here");
-                    //add reward here
-
-                    if (!isHuman)
+                    if(canShoot)
                     {
-                        //if(hit.collider.GetComponent<ShipController>() != null)
-                        //{
-                        //    GetComponent<MLADrive2>().AddReward(0.03f);
-                        //}
-                        //else
-                        //{
-                        //    GetComponent<MLADrive2>().AddReward(0.01f);
-                        //}
-
-                        GetComponent<MLADrive2>().AddReward(0.001f);
+                        weaponsSystems.Fire(target);
+                        canShoot = false;
+                        targetting = false;
 
                     }
                 }
+            }
+        }
+    }
+
+    public void TakeAim()
+    {
+        if (myPositionInRace > 0 && raceManager.Orders.Count > 0)
+        {
+            if (raceManager.Orders[myPositionInRace - 1].transform.position.z - transform.position.z < shootRange)
+            {
+
+                GameObject target = raceManager.Orders[myPositionInRace - 1];
+
+                if (Mathf.Abs(raceManager.Orders[myPositionInRace - 1].transform.position.x - transform.position.x) < aimWidth && Mathf.Abs(raceManager.Orders[myPositionInRace - 1].transform.position.y - transform.position.y) < aimWidth)
+                {
+                    weaponsSystems.Fire(target);
+                }
                 else
                 {
-                    //print("shot something indestructible: " + hit.collider.name);
-                    //negative reward for shooting something you shouldnt
-
-                    if (!isHuman)
-                    {
-                        GetComponent<MLADrive2>().AddReward(-0.001f);
-                    }
+                    //target too far aside, normal shot
+                    weaponsSystems.Fire(null);
                 }
             }
             else
             {
-                //print("shot nothing!");
-                //negative reward for missing
-
-                if (!isHuman)
-                {
-                    GetComponent<MLADrive2>().AddReward(-0.005f);
-                }
+                //no target, do normal shot
+                weaponsSystems.Fire(null);
             }
         }
         else
         {
-            //print("outta ammo");
-
-            if (!isHuman)
-            {
-                GetComponent<MLADrive2>().AddReward(-0.001f);
-            }
+            //my position is race is 0, just shoot straight forward
+            weaponsSystems.Fire(null);
         }
-
     }
+
+    //public void Fire(Vector3 direction)
+    //{
+    //    if (ammo > 0f)
+    //    {
+    //        ammo -= ammoConsumption;
+
+    //        RaycastHit hit;
+
+    //        Ray ray = new Ray(transform.position, direction);
+
+    //        if (Physics.Raycast(ray, out hit, shootRange, allCollidingLayers))
+    //        {
+    //            Debug.DrawRay(transform.position, direction * hit.distance, Color.yellow, 0.3f);
+
+    //            if (hit.collider.GetComponent<DamageManager>() != null)
+    //            {
+    //                hit.collider.GetComponent<DamageManager>().TakeDamage(weaponDamage);
+
+    //                if (hit.collider.gameObject.GetComponent<ShipController>() != null)
+    //                {
+
+    //                    hit.collider.gameObject.GetComponent<ShipController>().gotShotMod = weaponSlowMod;
+
+    //                    if (!isHuman)
+    //                    {
+    //                        GetComponent<MLADrive2>().AddReward(0.002f);
+
+
+    //                    }
+    //                }
+    //                else
+    //                {
+    //                    if (!isHuman)
+    //                    {
+    //                        GetComponent<MLADrive2>().AddReward(0.001f);
+
+
+    //                    }
+    //                }
+
+
+    //            }
+    //            else
+    //            {
+    //                //shot something indestructible
+    //                if (!isHuman)
+    //                {
+    //                    GetComponent<MLADrive2>().AddReward(-0.01f);
+    //                }
+    //            }
+    //        }
+    //        else
+    //        {
+    //            //shot missed
+
+    //            Debug.DrawRay(transform.position, direction * shootRange, Color.yellow, 0.3f);
+
+    //            if (!isHuman)
+    //            {
+    //                GetComponent<MLADrive2>().AddReward(-0.01f);
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        //no ammo
+    //        if (!isHuman)
+    //        {
+    //            GetComponent<MLADrive2>().AddReward(-0.01f);
+    //        }
+    //    }
+    //}
+
+    //public void Shoot()
+    //{
+    //    if(ammo > 0f)
+    //    {
+    //        ammo -= ammoConsumption;
+
+
+    //        RaycastHit hit;
+
+    //        Ray ray = new Ray(transform.position, transform.forward);
+
+    //        if (Physics.Raycast(ray, out hit, 20f, allCollidingLayers))
+    //        {
+    //            Debug.DrawRay(transform.position, Vector3.forward * hit.distance, Color.yellow, 0.3f);
+
+    //            if (hit.collider.GetComponent<DamageManager>() != null)
+    //            {
+    //                hit.collider.GetComponent<DamageManager>().TakeDamage(weaponDamage);
+
+    //                if (!isHuman)
+    //                {
+    //                    GetComponent<MLADrive2>().AddReward(0.001f);
+    //                }
+    //            }
+    //            else
+    //            {
+    //                //shot something indestructible
+    //                if (!isHuman)
+    //                {
+    //                    GetComponent<MLADrive2>().AddReward(-0.001f);
+    //                }
+    //            }
+    //        }
+    //        else
+    //        {
+    //            //shot missed
+    //            if (!isHuman)
+    //            {
+    //                GetComponent<MLADrive2>().AddReward(-0.005f);
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        //no ammo
+    //        if (!isHuman)
+    //        {
+    //            GetComponent<MLADrive2>().AddReward(-0.001f);
+    //        }
+    //    }
+
+    //}
 
     public void FixedUpdate()
     {
@@ -543,6 +796,17 @@ public class ShipController : MonoBehaviour
 
         Inputs();
 
+        //turnValue is used by animation
+        turnValue = input;
+        //if(turnValue > -deadzone && turnValue < deadzone)
+        //{
+        //    noTurnValue = true;
+        //}
+        //else
+        //{
+        //    noTurnValue = false;
+        //}
+
         CollisionDetection();
 
 
@@ -581,12 +845,18 @@ public class ShipController : MonoBehaviour
     {
         if (!isHuman)
         {
-            GetComponent<MLADrive2>().AddReward(-.01f);
+            GetComponent<MLADrive2>().AddReward(-.05f);
             //GetComponent<MLADrive2>().EndEpisode();
 
         }
 
         controlsEnabled = false;
+
+        if (GetComponent<Collider>().enabled)
+        {
+            GetComponent<Collider>().enabled = false;
+        }
+
         Invoke("RepositionShip", 2f);
         //if(!isHuman )
         //{
@@ -611,10 +881,15 @@ public class ShipController : MonoBehaviour
         rbMovement = Vector3.zero;
         rbVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
+
+        lastCheckpointNumber = 0;
 
 
         if (lastCheckpoint != null && lastCheckpoint.GetComponentInChildren<SetRespawnRotation>() != null)
         {
+            respawnIsOrigin = false;
+
             float x = lastCheckpoint.GetComponentInChildren<SetRespawnRotation>().transform.position.x;
             float y = lastCheckpoint.GetComponentInChildren<SetRespawnRotation>().transform.position.y;
             float z = lastCheckpoint.GetComponentInChildren<SetRespawnRotation>().transform.position.z;
@@ -622,7 +897,7 @@ public class ShipController : MonoBehaviour
             transform.position = new Vector3(x + originPoint.x, y, z + originPoint.z);
 
             //rb.position = new Vector3(x, y, z);
-            print("respawn at " + x + " " + y + " " + z);
+            //print("respawn at " + x + " " + y + " " + z);
 
             //print("rotation to " + lastCheckpoint.GetComponentInChildren<SetRespawnRotation>().gameObject.transform.rotation);
 
@@ -632,12 +907,29 @@ public class ShipController : MonoBehaviour
 
             //transform.rotation = 
         }
-        else
+        else if(respawnIsOrigin)
         {
             transform.position = originPoint;
-
-            //rb.MovePosition(originPoint);
         }
+        else
+        {
+            Transform pos = levelGenerator.FindOldestExistingCheckpoint();
+
+            float x = pos.transform.position.x;
+            float y = pos.transform.position.y;
+            float z = pos.transform.position.z;
+
+            transform.position = new Vector3(x + originPoint.x, y, z + originPoint.z);
+            transform.rotation = pos.transform.rotation;
+
+
+        }
+
+        if(!GetComponent<Collider>().enabled)
+        {
+            GetComponent<Collider>().enabled = true;
+        }
+
 
         fallTime = defFallTime;
 
@@ -655,6 +947,7 @@ public class ShipController : MonoBehaviour
         RaycastHit hitLeftSide;
         RaycastHit hitRightSide;
         RaycastHit hitUp;
+        RaycastHit hitBack;
 
         Ray rayForward = new Ray(forwardCollisionRaycast.position, forwardCollisionRaycast.transform.forward);
         Ray rayDiagonalLeft = new Ray(leftDiagonalCollisionRaycast.position, leftDiagonalCollisionRaycast.transform.forward);
@@ -662,6 +955,7 @@ public class ShipController : MonoBehaviour
         Ray raySideLeft = new Ray(leftSideCollisionRaycast.position, leftSideCollisionRaycast.transform.forward);
         Ray raySideRight = new Ray(rightSideCollisionRaycast.position, rightSideCollisionRaycast.transform.forward);
         Ray rayUp = new Ray(transform.position, transform.up);
+        Ray rayBack = new Ray(transform.position, -transform.forward);
 
         if(Physics.Raycast(rayUp, out hitUp, 5f, allCollidingLayers))
         {
@@ -682,7 +976,7 @@ public class ShipController : MonoBehaviour
             {
                 if (!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-.001f);
+                    GetComponent<MLADrive2>().AddReward(-.005f);
                 }
 
 
@@ -697,7 +991,11 @@ public class ShipController : MonoBehaviour
                     }
                 }
 
-                rbVelocity.z = Mathf.Min(0f, rbVelocity.z);
+                //TEST
+                rb.velocity = Vector3.zero;
+
+
+                rbVelocity.z = Mathf.Min(-1f, rbVelocity.z);
 
             }
         }
@@ -714,12 +1012,15 @@ public class ShipController : MonoBehaviour
 
                 if (!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-.001f);
+                    GetComponent<MLADrive2>().AddReward(-.005f);
                 }
 
-                rbVelocity.z = Mathf.Min(1f, rbVelocity.z);
+                //rbVelocity.z = Mathf.Min(1f, rbVelocity.z);
 
-                input = Mathf.Max(0f, input);
+                //TEST
+                rb.velocity = Vector3.zero;
+
+                input = Mathf.Max(0.5f, input);
 
                 //rbVelocity.x = Mathf.Max(0f, rbVelocity.x);
             }
@@ -737,12 +1038,15 @@ public class ShipController : MonoBehaviour
 
                 if (!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-.001f);
+                    GetComponent<MLADrive2>().AddReward(-.005f);
                 }
 
-                rbVelocity.z = Mathf.Min(1f, rbVelocity.z);
+                //rbVelocity.z = Mathf.Min(1f, rbVelocity.z);
 
-                input = Mathf.Min(0f, input);
+                //TEST
+                rb.velocity = Vector3.zero;
+
+                input = Mathf.Min(-0.5f, input);
 
                 //rbVelocity.x = Mathf.Min(0f, rbVelocity.x);
             }
@@ -754,10 +1058,13 @@ public class ShipController : MonoBehaviour
             {
                 if (!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-.001f);
+                    GetComponent<MLADrive2>().AddReward(-.005f);
                 }
 
-                input = Mathf.Max(0f, input);
+                input = Mathf.Max(0.5f, input);
+
+                //TEST
+                rb.velocity = Vector3.zero;
 
                 //rbVelocity.x = Mathf.Max(0f, rbVelocity.x);
             }
@@ -769,14 +1076,29 @@ public class ShipController : MonoBehaviour
             {
                 if (!isHuman)
                 {
-                    GetComponent<MLADrive2>().AddReward(-.001f);
+                    GetComponent<MLADrive2>().AddReward(-.005f);
                 }
 
-                input = Mathf.Min(0f, input);
+                input = Mathf.Min(-0.5f, input);
+
+                //TEST
+                rb.velocity = Vector3.zero;
 
                 //rbVelocity.x = Mathf.Min(0f, rbVelocity.x);
             }
         }
+
+        if (Physics.Raycast(rayBack, out hitBack, collisionDistance, allCollidingLayers))
+        {
+            if (hitBack.distance < collisionDistance)
+            {
+                if (!isHuman)
+                {
+                    GetComponent<MLADrive2>().AddReward(-.005f);
+                }
+            }
+        }
+
     }
 
     //debugging tool
@@ -872,7 +1194,7 @@ public class ShipController : MonoBehaviour
                     {
                         //reward add
                         //print("reward here");
-                        GetComponent<MLADrive2>().AddReward(0.002f);
+                        GetComponent<MLADrive2>().AddReward(0.011f);
                     }
 
                     jumpCheckTag = false;
@@ -906,6 +1228,8 @@ public class ShipController : MonoBehaviour
 
         if (Physics.Raycast(rayFront, out hitFront, 20f, Ground))
         {
+            hitDistance = hitFront.distance;
+
             groundAngleFront = hitFront.normal;
             hit1 = true;
 
@@ -922,6 +1246,8 @@ public class ShipController : MonoBehaviour
         {
             hit1 = false;
             ground1 = false;
+
+            hitDistance = 999f;
 
         }
 
@@ -1117,10 +1443,10 @@ public class ShipController : MonoBehaviour
 
             if(fallTime < 0f && controlsEnabled)
             {
-                if(!isHuman)
-                {
-                    GetComponent<MLADrive2>().AddReward(-.005f);
-                }
+                //if(!isHuman)
+                //{
+                //    GetComponent<MLADrive2>().AddReward(-.005f);
+                //}
 
                 RepositionAfterDelay();
 
@@ -1214,12 +1540,14 @@ public class ShipController : MonoBehaviour
             if (acceleration > -deadzone && acceleration < deadzone) //no acceleration input, coastingDrag is the speed at which velocity is lost
                 localVelocity.z = Mathf.MoveTowards(localVelocity.z, 0f, coastingDrag * deltaTime);
             else if (acceleration > deadzone) //accelerating
-                localVelocity.z = Mathf.MoveTowards(localVelocity.z, (maxSpeedStat + speedMod + nitroBoost) / slowMod, acceleration * (speedMod + nitroBoost + accelerationStat * deltaTime));
+                localVelocity.z = Mathf.MoveTowards(localVelocity.z, (maxSpeedStat + speedMod + nitroBoost) / (slowMod * gotShotMod), acceleration * ((nitroBoost/10f) + speedMod + accelerationStat * deltaTime));
             else if (localVelocity.z > deadzone) //negative acceleration and going forwards
                 localVelocity.z = Mathf.MoveTowards(localVelocity.z, 0f, -acceleration * braking * deltaTime);
             else //negative acceleration and going backwards
                 localVelocity.z = Mathf.MoveTowards(localVelocity.z, -reverseSpeed, -acceleration * reverseAcceleration * deltaTime);
         }
+
+        currentSpeed = localVelocity.z;
 
         //if (!isHuman)
         //{
@@ -1231,7 +1559,7 @@ public class ShipController : MonoBehaviour
 
         rbVelocity = unrotation * rotationStream * localVelocity;
 
-        if(!isGrounded)
+        if(!isGrounded && controlsEnabled)
         {
             Vector3 fallVelocity = rbVelocity;
 
@@ -1239,9 +1567,9 @@ public class ShipController : MonoBehaviour
             fallVelocity += -transform.up * (gravity * gravityMod) * deltaTime;
 
             //fallVelocity is clamped so it cannot exceed maxSpeed
-            fallVelocity.y = Mathf.Clamp(fallVelocity.y, -maxSpeedStat, maxSpeedStat);
-            fallVelocity.x = Mathf.Clamp(fallVelocity.x, -maxSpeedStat, maxSpeedStat);
-            fallVelocity.z = Mathf.Clamp(fallVelocity.z, -maxSpeedStat, maxSpeedStat);
+            fallVelocity.y = Mathf.Clamp(fallVelocity.y, -50f, 50f);
+            fallVelocity.x = Mathf.Clamp(fallVelocity.x, -50f, 50f);
+            fallVelocity.z = Mathf.Clamp(fallVelocity.z, -50f, 50f);
 
             rbVelocity = fallVelocity;
             //rbVelocity = unrotation * rotationStream * fallVelocity;
@@ -1257,7 +1585,7 @@ public class ShipController : MonoBehaviour
 
             if (!isHuman)
             {
-                GetComponent<MLADrive2>().AddReward(-0.001f);
+                GetComponent<MLADrive2>().AddReward(-0.01f);
             }
 
             //rbVelocity += rotationStream * Vector3.up * jumpSpeed;

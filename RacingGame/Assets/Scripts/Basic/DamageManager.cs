@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class DamageManager : MonoBehaviour
 {
-    public int maxHitPoints;
-    public int hitPoints;
+    public float maxHitPoints;
+    public float hitPoints;
 
     //if the object is a racer, death causes them to be respawned
     public bool isRacer;
@@ -27,6 +27,16 @@ public class DamageManager : MonoBehaviour
     //this pertains to trucks, which have multiple pieces; if the driver is destroyed the carriages should stop
     public CarMove carMove;
 
+    public bool dropPickupOnDeath; //some objects will drop a single use powerup when destroyed
+    public float chanceToDrop;
+    public GameObject[] drops;
+
+    public bool doExplode;
+    public GameObject explosion;
+
+    public bool doSparks;
+    //public GameObject sparks;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,11 +54,21 @@ public class DamageManager : MonoBehaviour
         
     }
 
-    public void TakeDamage(int damage)
+    public bool TakeDamage(float damage)
     {
         if(GetComponent<MLADrive2>() != null)
         {
             GetComponent<MLADrive2>().AddReward(-.005f);
+        }
+
+        if(doSparks)
+        {
+            GetComponentInChildren<ParticleSystem>().Play();
+        }
+
+        if (GetComponent<ShipSounds>() != null)
+        {
+            GetComponent<ShipSounds>().PlayHitSound();
         }
 
 
@@ -59,22 +79,59 @@ public class DamageManager : MonoBehaviour
             if(hitPoints <= 0)
             {
                 Death();
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         else
         {
             Death();
+            return true;
         }
     }
 
     public void Death()
     {
+        if (doExplode)
+        {
+            //if(GetComponent<ShipSounds>() != null)
+            //{
+            //    GetComponent<ShipSounds>().PlayExplosionSound();
+            //}
+
+            if(useSpecificObjectTransform)
+            {
+
+                GameObject explode = Instantiate(explosion, GetComponent<Collider>().bounds.center, transform.rotation);
+
+            }
+            else
+            {
+                GameObject explode = Instantiate(explosion, transform.position, transform.rotation);
+
+            }
+        }
+
         if(spawnBrokenPartsOnDeath)
         {
             if(!isRacer)
             {
+                if(dropPickupOnDeath)
+                {
+                    if(Random.Range(0f, 1f) < chanceToDrop)
+                    {
+                        GameObject drop = Instantiate(drops[Random.Range(0, drops.Length - 1)], transform.position, Quaternion.identity);
+                    }
+                }
+
+
                 if(useSpecificObjectTransform)
                 {
+
                     GameObject parts = Instantiate(brokenParts, specificObjectTransform.transform.position, specificObjectTransform.transform.rotation);
 
                 }
@@ -99,14 +156,16 @@ public class DamageManager : MonoBehaviour
             }
             else
             {
-                //could add some effect here, or maybe a slight delay
-                shipController.RepositionAfterDelay();
-                hitPoints = maxHitPoints;
+                RacerDestroyed();
 
             }
         }
         else
         {
+            //if not spawning broken parts
+            //eventually I will add more broken parts to many objects
+
+
             if (carMove != null)
             {
                 carMove.checkForObstacles = false;
@@ -116,14 +175,42 @@ public class DamageManager : MonoBehaviour
             foreach (GameObject item in partsToDestroy)
             {
                 //will this work ok? It could attempt to destroy itself before all parts are destroyed. Test on barriers
+                //seems good
                 Destroy(item);
             }
 
             if (isRacer)
             {
-                //could add some effect here, or maybe a slight delay
-                shipController.RepositionAfterDelay();
+                RacerDestroyed();
+            }
+        }
+    }
+
+    public void RacerDestroyed()
+    {
+        //could add some effect here, or maybe a slight delay
+        if (!shipController.careerMode)
+        {
+            shipController.RepositionAfterDelay();
+
+            if (!shipController.inTraining)
+            {
+                //this will occur in Quick Race mode
                 hitPoints = maxHitPoints;
+            }
+            else
+            {
+                //during ML training, agents get a random amount of hit points
+                hitPoints = Random.Range(0f, maxHitPoints);
+            }
+
+        }
+        else
+        {
+            //if the player is destroyed, it leads to an instant loss
+            if (shipController.isHuman)
+            {
+                shipController.raceManager.OnRaceLoss();
             }
         }
     }

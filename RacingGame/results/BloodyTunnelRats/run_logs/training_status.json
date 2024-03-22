@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 8499892,
+                "file_path": "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-8499892.onnx",
+                "reward": -51.29600524902344,
+                "creation_time": 1707244272.3617818,
+                "auxillary_file_paths": [
+                    "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-8499892.pt"
+                ]
+            },
+            {
+                "steps": 8999743,
+                "file_path": "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-8999743.onnx",
+                "reward": -40.86140365600586,
+                "creation_time": 1707244924.6800978,
+                "auxillary_file_paths": [
+                    "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-8999743.pt"
+                ]
+            },
+            {
+                "steps": 9499921,
+                "file_path": "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-9499921.onnx",
+                "reward": -5.843914491789682,
+                "creation_time": 1707245559.5599597,
+                "auxillary_file_paths": [
+                    "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-9499921.pt"
+                ]
+            },
+            {
+                "steps": 9999530,
+                "file_path": "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-9999530.onnx",
+                "reward": -25.111581002607156,
+                "creation_time": 1707246208.5820465,
+                "auxillary_file_paths": [
+                    "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-9999530.pt"
+                ]
+            },
+            {
+                "steps": 10000530,
+                "file_path": "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-10000530.onnx",
+                "reward": -26.490752127952874,
+                "creation_time": 1707246208.6964746,
+                "auxillary_file_paths": [
+                    "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-10000530.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 10000530,
+            "file_path": "results\\BloodyTunnelRats\\TunnelDriverTest.onnx",
+            "reward": -26.490752127952874,
+            "creation_time": 1707246208.6964746,
+            "auxillary_file_paths": [
+                "results\\BloodyTunnelRats\\TunnelDriverTest\\TunnelDriverTest-10000530.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2797426641185339760}
   - component: {fileID: 5902490418424667418}
+  - component: {fileID: -2827033558730827098}
   m_Layer: 0
   m_Name: ShipModel
   m_TagString: Untagged
@@ -40,7 +41,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366373976854707537}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9d2d47a16bb175429a367506a57a4e7, type: 3}
   m_Name: 
@@ -48,7 +49,28 @@ MonoBehaviour:
   target: {fileID: 0}
   lerpPosSmoothing: 10
   lerpRotSmoothing: 5
-  destroyIfNoTarget: 0
+  destroyIfNoTarget: 1
+--- !u!114 &-2827033558730827098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366373976854707537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d5785280cdb21b409deae44b69138f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 0
+  maxSpeed: 0
+  maxFuel: 0
+  fuelConsumption: 0
+  boostValue: 0
+  maxStrafe: 0
+  brake: 0
+  grip: 0
+  randomize: 1
 --- !u!1001 &6354149366581778908
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63,11 +85,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c199fc0705890264a9481a1221f3c9e9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c199fc0705890264a9481a1221f3c9e9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.447
+      value: 3.18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c199fc0705890264a9481a1221f3c9e9, type: 3}
       propertyPath: m_LocalRotation.w

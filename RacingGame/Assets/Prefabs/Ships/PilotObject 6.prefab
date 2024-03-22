@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2636342195220007493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7976828649154159761}
+  - component: {fileID: 2821441081902995316}
+  m_Layer: 0
+  m_Name: PilotObject 6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7976828649154159761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2636342195220007493}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2821441081902995316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2636342195220007493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0c90b517aa82bb4fb449dd0a29b909d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pilotName: Old Man
+  description: The Old Man was racing before most of the other racers were even born.
+    He likes tinkering with the engine. He favours acceleration, grip, and braking.
+  acceleration: 3
+  maxSpeed: 0
+  maxFuel: 0
+  fuelConsumption: 0
+  boostValue: 0
+  maxStrafe: 0
+  brake: 1
+  grip: 2
+  weaponDamage: 0
+  weaponSlow: 0
+  weaponSpeed: 0
+  pilotEngine: 0
+  pilotWeapons: 2
+  pilotShip: 4
+  colors:
+  - {r: 1, g: 0.4577373, b: 0, a: 1}
+  - {r: 1, g: 0.6079833, b: 0, a: 1}
+  - {r: 1, g: 0.793835, b: 0, a: 1}
+  - {r: 1, g: 0.793835, b: 0, a: 1}
+  materialMetallic: 1
+  materialSmoothness: 0.816
+  pilotFace: {fileID: 21300000, guid: acbe6048569c65a43b3dec8464364eec, type: 3}
+  randomize: 0

@@ -45,8 +45,13 @@ public class Checkpoint : MonoBehaviour
                 {
                     other.GetComponent<ShipController>().timeout = other.GetComponent<ShipController>().defTimeout;
 
-                    other.GetComponent<MLADrive2>().AddReward(0.2f);
-                    other.GetComponent<MLADrive2>().EndEpisode();
+                    other.GetComponent<MLADrive2>().AddReward(0.8f);
+
+                    if (isRespawnCheckpoint)
+                    {
+                        other.GetComponent<MLADrive2>().EndEpisode();
+
+                    }
                 }
                 
                 if(other.GetComponent<ShipController>().lastCheckpointNumber > checkpointNumber)
@@ -57,7 +62,11 @@ public class Checkpoint : MonoBehaviour
 
             if (other.GetComponent<ShipController>().lastCheckpointNumber < checkpointNumber || other.GetComponent<ShipController>().lastCheckpointNumber == 0)
             {
-                other.GetComponent<ShipController>().lastCheckpoint = this.gameObject;
+                if(isRespawnCheckpoint)
+                {
+                    other.GetComponent<ShipController>().lastCheckpoint = this.gameObject;
+
+                }
 
                 other.GetComponent<ShipController>().lastCheckpointNumber = checkpointNumber;
 

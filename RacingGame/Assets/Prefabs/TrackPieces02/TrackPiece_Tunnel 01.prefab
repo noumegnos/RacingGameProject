@@ -987,6 +987,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5439066667634423009, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5439066667634423009, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 6299438647257943496, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
       propertyPath: m_Name
       value: Cube Building 1
@@ -1545,6 +1553,14 @@ PrefabInstance:
       value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 10bf62b616561b44681130861bc00846, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4292154010595695564, guid: 10bf62b616561b44681130861bc00846, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: -4292154010595695564, guid: 10bf62b616561b44681130861bc00846, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
@@ -1877,6 +1893,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5439066667634423009, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5439066667634423009, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 6299438647257943496, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
       propertyPath: m_Name
       value: Cube Building 1 (1)
@@ -1959,6 +1983,14 @@ PrefabInstance:
     - target: {fileID: 1175591788114355768, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5439066667634423009, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5439066667634423009, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 6299438647257943496, guid: 0dd9c19c02fe2b54ab55965641861293, type: 3}
       propertyPath: m_Name

@@ -11,10 +11,19 @@ public class RefillScript : MonoBehaviour
     public bool reammo;
     public bool repair;
 
+    //whether to give money on pickup
+    public bool money;
+
     //amount of fuel, ammo, health to refill
     public float fuelAmount;
     public float ammoAmount;
-    public int repairAmount;
+    public float repairAmount;
+
+    public float moneyAmount;
+
+    public bool singleUse;
+
+    public GameObject powerUpEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +41,9 @@ public class RefillScript : MonoBehaviour
     {
         if(other.GetComponent<ShipController>() != null)
         {
+            GameObject partlcle = Instantiate(powerUpEffect, other.transform.position, transform.rotation, other.transform);
+
+
             if (refuel)
             {
                 other.GetComponent<ShipController>().fuel = Mathf.Min(other.GetComponent<ShipController>().fuel + fuelAmount, other.GetComponent<ShipController>().maxFuel);
@@ -49,9 +61,19 @@ public class RefillScript : MonoBehaviour
                 other.GetComponent<DamageManager>().hitPoints = Mathf.Min(other.GetComponent<DamageManager>(). hitPoints + repairAmount, other.GetComponent<DamageManager>().maxHitPoints);
             }
 
+            if(money)
+            {
+                other.GetComponentInChildren<CharacterSheet>().money += moneyAmount;
+            }
+
             if (!other.gameObject.GetComponent<ShipController>().isHuman)
             {
-                other.gameObject.GetComponent<MLADrive2>().AddReward(0.05f);
+                other.gameObject.GetComponent<MLADrive2>().AddReward(0.5f);
+            }
+
+            if(singleUse)
+            {
+                Destroy(this.gameObject);
             }
         }
     }

@@ -55,12 +55,18 @@ MonoBehaviour:
   levelPartList02: []
   levelPartList03: []
   levelPartListTransitions: []
+  goalPart: []
+  countUntilGoal: 0
   levelPart_Start: {fileID: 0}
   player: {fileID: 0}
   levelChoice: 0
   started: 0
   randomLevels: 1
+  infiniteLevel: 0
+  randomLevelLength: 0
+  useOrdersList: 0
   currentLevelParts: []
+  maxiumumCurrentLevelParts: 100
   countSinceRefuel: 0
   usePartsCount: 0
   refuel: 0
@@ -74,3 +80,7 @@ MonoBehaviour:
   checkpointCounter: 0
   listOfRespawnPoints: []
   oldestCheckpoint: {fileID: 0}
+  useResetTimer: 0
+  resetTimer: 0
+  defResetTimer: 0
+  camObject: {fileID: 0}

@@ -1,0 +1,65 @@
+{
+    "TunnelDriverTest": {
+        "checkpoints": [
+            {
+                "steps": 8499893,
+                "file_path": "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-8499893.onnx",
+                "reward": -2.2608572714296833,
+                "creation_time": 1706739070.267157,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-8499893.pt"
+                ]
+            },
+            {
+                "steps": 8999979,
+                "file_path": "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-8999979.onnx",
+                "reward": -4.244392700964892,
+                "creation_time": 1706740233.6588364,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-8999979.pt"
+                ]
+            },
+            {
+                "steps": 9499940,
+                "file_path": "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-9499940.onnx",
+                "reward": -2.62085713659014,
+                "creation_time": 1706741461.547755,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-9499940.pt"
+                ]
+            },
+            {
+                "steps": 9999960,
+                "file_path": "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-9999960.onnx",
+                "reward": -3.164098003185263,
+                "creation_time": 1706742639.981039,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-9999960.pt"
+                ]
+            },
+            {
+                "steps": 10000078,
+                "file_path": "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-10000078.onnx",
+                "reward": -3.217038459359453,
+                "creation_time": 1706742640.0100772,
+                "auxillary_file_paths": [
+                    "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-10000078.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 10000078,
+            "file_path": "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest.onnx",
+            "reward": -3.217038459359453,
+            "creation_time": 1706742640.0100772,
+            "auxillary_file_paths": [
+                "results\\OnceMoreIntoTheTunnel10\\TunnelDriverTest\\TunnelDriverTest-10000078.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

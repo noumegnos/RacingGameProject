@@ -19,16 +19,28 @@ public class CameraFollow : MonoBehaviour
     public bool followEulerAnglesY;
     public bool followEulerAnglesZ;
 
+    //public bool destroyIfNoTarget;
+
+    public LevelGenerator levelGenerator;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        levelGenerator = GameObject.FindObjectOfType<LevelGenerator>();
+
+        levelGenerator.camObject = this.gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //if (destroyIfNoTarget)
+        //{
+        //    if (target == null)
+        //    {
+        //        Destroy(this.gameObject);
+        //    }
+        //}
     }
 
     private void FixedUpdate()
@@ -77,6 +89,13 @@ public class CameraFollow : MonoBehaviour
 
             //transform.eulerAngles = currentEulerAngles;
         }
+
+    }
+
+    private void LateUpdate()
+    {
+
+
     }
 }
 

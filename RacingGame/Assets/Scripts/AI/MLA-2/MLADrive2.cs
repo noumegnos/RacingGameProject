@@ -91,11 +91,48 @@ public class MLADrive2 : Agent
         //testing adding it back in
         sensor.AddObservation(GetComponent<ShipController>().distanceToNextCheckpoint);
 
+        sensor.AddObservation(GetComponent<ShipController>().hitDistance);
+
+        if (GetComponent<ShipController>().controlsEnabled)
+        {
+            if(GetComponent<ShipController>().hitDistance > 20f)
+            {
+                AddReward(-.01f);
+            }
+        }
+
         //I'll try giving sensors info about timeout
         if (GetComponent<ShipController>().useTimeout)
         {
             sensor.AddObservation(GetComponent<ShipController>().timeout);
         }
+
+        //float positionReward = 0;
+
+        //foreach (GameObject racer in raceManager.RacersList)
+        //{
+        //    sensor.AddObservation(racer.transform.position.z);
+
+        //    if(racer.gameObject != this.gameObject)
+        //    {
+        //        if (transform.position.z > racer.transform.position.z)
+        //        {
+        //            positionReward = positionReward + 0.01f;
+        //        }
+        //        else
+        //        {
+        //            positionReward = positionReward - 0.01f;
+        //        }
+        //    }
+
+        //}
+
+
+
+        //for (int i = 0; i < raceManager.Orders.Count; i++)
+        //{
+
+        //}
 
         //several examples have also shown that we can add some rewards in here, such as a small negative reward over time, or a small positive reward for going at speed
 
@@ -103,7 +140,9 @@ public class MLADrive2 : Agent
         //controls must be enabled or else it might sit in the goal waiting and get a poor reward
         if(GetComponent<ShipController>().controlsEnabled)
         {
-            AddReward(-.01f);
+            AddReward(-.08f);
+            //AddReward(positionReward);
+
         }
     }
 
